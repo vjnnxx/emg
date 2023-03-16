@@ -1,3 +1,9 @@
+import matplotlib
+matplotlib.use("TkAgg")
+
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+
+import tkinter as tk
 from tkinter import *
 from tkinter import ttk
 from tkinter import filedialog
@@ -6,6 +12,7 @@ import scipy.io
 import scipy.io.wavfile
 import numpy as np
 import matplotlib.pyplot as plt
+
 
 
 #teste do botao de gravar
@@ -34,6 +41,8 @@ class arquivo:
 
         time = np.arange(0,duration,1/self.sampleRate) #time vector
 
+        
+        '''
         fig = plt.figure()
 
         plt.plot(time,self.audioBuffer/10000)
@@ -41,38 +50,102 @@ class arquivo:
         plt.ylabel('Amplitude [V]')
         plt.title(name)
         plt.show()
-
+        '''
 
        
 
     def debug(self):
         print(self.path, self.wavedata, self.sampleRate, self.audioBuffer)
 
-
+#Botão que abre arquivo wav e gera gráfico em uma nova janela
 def browseFiles():
 
 
+        try:
     
-        filename = filedialog.askopenfilename(initialdir = "/", title = "Select a File", 
-            filetypes = (("Wav files", '*.wav'),)
-        )
+            filename = filedialog.askopenfilename(initialdir = "/", title = "Select a File", 
+                filetypes = (("Wav files", '*.wav'),)
+            )
+            
+            # Change label contents
+            label_file_explorer.configure(text="Arquivo Aberto: "+filename)
+
+
+
+            newWindow = Toplevel()
+
+            newWindow.title('Gráfico')
+
+            newWindow.geometry("900x600")
+
+            newWindow.resizable(0,0)    
+
+            #extraindo o nome do caminho
+
+            name = filename.split('/')
+            name = name[-1]
+
+            file = arquivo()
+
+            file.path = filename
+
+            dataset_path = os.path.join(file.path) 
+            file.wavedata = os.path.join(dataset_path)
         
-        # Change label contents
-        label_file_explorer.configure(text="Arquivo Aberto: "+filename)
+            file.sampleRate, file.audioBuffer = scipy.io.wavfile.read(file.wavedata)
 
-        file = arquivo()
+            duracao = len(file.audioBuffer)/file.sampleRate
 
-        file.path = filename
 
-        dataset_path = os.path.join(file.path) 
-        file.wavedata = os.path.join(dataset_path)
-    
-        file.sampleRate, file.audioBuffer = scipy.io.wavfile.read(file.wavedata)
+            tempo = np.arange(0,duracao,1/file.sampleRate)
+            
+            fig = plt.figure(figsize=(5,5), dpi=100)
 
-        file.plot_wav()
+            a = fig.add_subplot(111)
+
+            a.plot(tempo, file.audioBuffer/10000)
+
+            plt.xlabel('Tempo [s]')
+            plt.ylabel('Amplitude [Hz]')
+            plt.title(name)
+
+            canvas = FigureCanvasTkAgg(fig, newWindow)
+            canvas.draw()
+            canvas.get_tk_widget().grid(column=1, row=0)
+
+            button_save = Button(newWindow, text = "Salvar", command = saveFile)
+
+            button_analise = Button(newWindow, text= "Análise", command= analiseFile)
+
+            button_save.grid(row=1)
+            button_analise.grid(column=1, row=1)
+
+        except:
+            print('opa')
+            continue
+
+
+def saveFile():
+    print("Salvar arquivo")
+
+
+def analiseFile():
+    print("Analisar arquivo")
+
+        
    
 def showFigures():
-    print('qualquer coisa')
+     
+     newWindow = Toplevel()
+
+     newWindow.title('Nova janela')
+
+     newWindow.geometry("500x500")
+
+     newWindow.resizable(0,0)
+
+     Label(newWindow, text= "Janela aberta com o botão").pack()
+
 
 def recordAudio():
     print('Botão para gravar audio')
