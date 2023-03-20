@@ -121,8 +121,7 @@ def browseFiles():
             button_analise.grid(column=1, row=1)
 
         except:
-            print('opa')
-            continue
+            print('opa')        
 
 
 def saveFile():
@@ -148,6 +147,17 @@ def showFigures():
 
 
 def recordAudio():
+
+
+    newWindow = Toplevel()
+
+    newWindow.title('Gráfico')
+
+    newWindow.geometry("900x600")
+
+    newWindow.resizable(0,0)    
+
+
     print('Botão para gravar audio')
     device = 0 # id of the audio device by default
     window = 1000 # window for the data
@@ -226,15 +236,42 @@ def recordAudio():
 
     plt.ylim(top=1)
     
-
+    canvas = FigureCanvasTkAgg(fig, newWindow)
+    canvas.draw()
+    canvas.get_tk_widget().grid(column=1, row=0)
     ani  = FuncAnimation(fig,update_plot, interval=interval,blit=True)
+    
 
     plt.ylabel("Amplitude")
+    
     with stream:
         plt.show()
 
 
 root = Tk()
+
+#Configurações do menu superior
+menu = Menu(root)
+
+root.config(menu=menu)
+
+menuArquivo = Menu(menu)
+menu.add_cascade(label="Arquivo", menu=menuArquivo)
+menuArquivo.add_command(label="Abrir")
+
+menuSalvar = Menu(menu)
+menu.add_cascade(label="Salvar", menu=menuSalvar)
+menuSalvar.add_command(label="Salvar como...")
+
+menuAnalises = Menu(menu)
+menu.add_cascade(label="Análises", menu=menuAnalises)
+menuAnalises.add_command(label="Nova análise")
+menuAnalises.add_command(label="Gerenciar análises")
+
+menuConfig = Menu(menu)
+menu.add_cascade(label="Configurações", menu=menuConfig)
+menuConfig.add_command(label="Entrada")
+menuConfig.add_command(label="Gráfico")
 
 root.maxsize(900,600)
 
