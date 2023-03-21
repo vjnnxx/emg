@@ -148,17 +148,6 @@ def showFigures():
 
 def recordAudio():
 
-
-    newWindow = Toplevel()
-
-    newWindow.title('Gráfico')
-
-    newWindow.geometry("900x600")
-
-    newWindow.resizable(0,0)    
-
-
-    print('Botão para gravar audio')
     device = 0 # id of the audio device by default
     window = 1000 # window for the data
     downsample = 4 # how much samples to drop (inicialmente era 1)
@@ -187,6 +176,8 @@ def recordAudio():
 
     # next is to make fig and axis of matplotlib plt
     fig,ax = plt.subplots(figsize=(8,4))
+
+    
 
     # lets set the title
     ax.set_title("Entrada de áudio")
@@ -235,17 +226,28 @@ def recordAudio():
 
 
     plt.ylim(top=1)
+
     
-    canvas = FigureCanvasTkAgg(fig, newWindow)
+
+    canvas = FigureCanvasTkAgg(fig, root)
+    ani  = FuncAnimation(fig,update_plot, interval=interval,blit=True)
     canvas.draw()
     canvas.get_tk_widget().grid(column=1, row=0)
-    ani  = FuncAnimation(fig,update_plot, interval=interval,blit=True)
+    
     
 
     plt.ylabel("Amplitude")
     
+
+
     with stream:
+        
         plt.show()
+       
+    
+
+        
+    
 
 
 root = Tk()
@@ -295,7 +297,7 @@ button_exit = Button(root, text="Sair", command=exit)
 
 
 
-
+'''
 label_file_explorer.grid(column = 0, row = 1)
   
 button_explore.grid(column = 0, row = 2)
@@ -304,7 +306,11 @@ button_show.grid(column=0, row=3)
 
 button_record.grid(column=0, row=4)
 
+
+'''
 button_exit.grid(column = 0,row = 5)
+
+recordAudio()
 
 
 root.mainloop()
