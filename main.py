@@ -1,11 +1,11 @@
 from tkinter import *
 from tkinter import ttk
+
+import threading
 import sys 
 sys.path.append('./modules')
-from modules import functions
+from modules.functions import *
 
-
-print(sys.path)
 
 root = Tk()
 
@@ -42,38 +42,9 @@ root.title("EMG")
 
 mainframe = ttk.Frame(root)
 
-'''
 
-label_file_explorer = Label(root,text = "File Explorer using Tkinter", width = 100, height = 4, fg = "blue")
-
-
-
-button_show = Button(root, text='Exibir figuras salvas', command= showFigures)
-
-button_record = Button(root, text='Gravar áudio', command=recordAudio)
-
-
-'''
-
-
-button_explore = Button(root, text = "Abrir arquivo", command = functions.browseFiles)
+button_explore = Button(root, text = "Abrir arquivo", command = browseFiles)
 button_exit = Button(root, text="Sair", command=exit)
-
-
-
-
-'''
-label_file_explorer.grid(column = 0, row = 1)
-  
-
-button_show.grid(column=0, row=3)
-
-button_record.grid(column=0, row=4)
-
-
-'''
-
-
 
 
 
@@ -82,25 +53,9 @@ button_explore.pack()
 
 button_exit.pack()
 
-'''
-button_record.grid(column=0, row = 0)
-button_pause.grid(column=0, row = 1)
-button_stop.grid(column=0, row = 2)
 
-
-
-button_explore.grid(column = 1, row = 2)
-  
-
-button_exit.grid(column = 1,row = 5)
-'''
-
-
-
-
-functions.recorder(root)
-
-functions.recordAudio(root)
+recorder(root)
+recordAudio(root)
 
 
 root.mainloop()
