@@ -3,11 +3,14 @@ from tkinter import ttk
 from tkinter import filedialog
 from tkinter import filedialog
 
+import threading
+
 import os 
 
 import sys
 sys.path.append('./modules')
 import arquivo
+import player
 
 import numpy as np
 
@@ -21,6 +24,7 @@ matplotlib.use("TkAgg")
 
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
+import wave
 import queue
 import sounddevice as sd
 import pyaudio
@@ -245,20 +249,34 @@ def recordAudio(root):
     with stream:
       plt.show()
 
+class player:
+
+    def __init__(self):
+        self.on = False
+
+    
+    def switch_on(self, value):
+        self.on = value
+
+    def get_on(self):
+        return self.on
+
+
 def recorder(root):
 
+    
 
-    global recordSwitch
-    recordSwitch = 0
+    tocar = player()
+
+    
 
 
-    def record(trigger):
+    def record():
         #logica para gravar audio
         
-        '''
-        global trigger
-        trigger = True
-        '''
+
+        tocar.switch_on(True)
+
 
         audio = pyaudio.PyAudio()
 
@@ -272,50 +290,57 @@ def recorder(root):
          
         print("Gravando áudio...")
 
-        if trigger:
-            while trigger:
-                data = stream.read(1024)
-                frames.append(data)
+        
+        while tocar.get_on():
+            data = stream.read(1024)
+            frames.append(data)
 
         stream.stop_stream()
         stream.close()
         audio.terminate()
 
-    
+        try:
+            os.makedirs('./audio')
+        except:
+            pass
 
-    buttonClicked = False
+
+        #conta o número de arquivos na pasta audio para numerar os arquivos salvos
+        lst = os.listdir('./audio') 
+        number_files = len(lst)
+
+        novo_arquivo = './audio/audio' + str(number_files) + '.wav' 
+
+        sound_file = wave.open(novo_arquivo, 'wb')
+        sound_file.setnchannels(1)
+        sound_file.setsampwidth(audio.get_sample_size(pyaudio.paInt16))
+        sound_file.setframerate(44100)
+        sound_file.writeframes(b''.join(frames))
+        sound_file.close()
+
+        print('Gravação finalizada')
+
 
     def stop():
-        trigger = False
+        tocar.switch_on(False)
 
-
-    def teste():
-        print(button_record['state'])
     
-    buttonClicked = False
+    def run_thread(x, func, *args):
+        #x = threading.Thread(target=func).start()
+        if args:
+            x = threading.Thread(target=func, args=(args[0],)).start()
+        else:
+            x = threading.Thread(target=func).start()
+            
 
-    button_record = Button(root, text= "Gravar", command=record)
-    button_pause = Button (root, text= "Pausar", command=stop)
-    button_stop = Button(root, text= "Parar")
+    thread1 = ''
+    thread2 = ''
+
+    button_record = Button(root, text= "Gravar", command=lambda: run_thread(thread1,record))
+    button_pause = Button (root, text= "Parar", command=lambda: run_thread(thread2,stop))
+    
 
 
 
     button_record.pack()
     button_pause.pack()
-    button_stop.pack()
-
-    
-   
-
-    '''
-    #Grava a entrada de som até que haja uma interrupção do teclado
-    
-
-    #cria um arquivo de audio e escreve os dados obtidos nele
-    sound_file = wave.open("record.wav", 'wb')
-    sound_file.setnchannels(1)
-    sound_file.setsampwidth(audio.get_sample_size(pyaudio.paInt16))
-    sound_file.setframerate(44100)
-    sound_file.writeframes(b''.join(frames))
-    sound_file.close()
-    ''' 
