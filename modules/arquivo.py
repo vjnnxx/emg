@@ -4,10 +4,12 @@ import numpy as np
 class arquivo:
 
     def __init__(self, path='', wavedata='', sampleRate='', audioBuffer='',):
-        self.path = path
+        self.path = path #arquivo externo
         self.wavedata = wavedata
         self.sampleRate = sampleRate
         self.audioBuffer = audioBuffer
+        self.audiofile_path = ''
+        self.imagefile_path = ''
 
     def plot_wav(self):
 
@@ -19,17 +21,19 @@ class arquivo:
 
         time = np.arange(0,duration,1/self.sampleRate) #time vector
 
-        
-        '''
-        fig = plt.figure()
 
-        plt.plot(time,self.audioBuffer/10000)
-        plt.xlabel('Tempo [s]')
-        plt.ylabel('Amplitude [V]')
-        plt.title(name)
-        plt.show()
-        '''
+    def set_audiofile_path(self, path):
+        self.audiofile_path = path
+    
+    def set_imagefile_path(self, path):
+        self.imagefile_path = path
 
+
+    def get_audiofile_path(self):
+        return self.audiofile_path
+    
+    def get_imagefile_path(self):
+        return self.imagefile_path
        
 
     def debug(self):

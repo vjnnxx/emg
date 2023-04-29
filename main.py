@@ -1,11 +1,11 @@
 from tkinter import *
 from tkinter import ttk
 
+
 import threading
 import sys 
 sys.path.append('./modules')
 from modules.functions import *
-
 
 root = Tk()
 
@@ -34,7 +34,7 @@ menuConfig.add_command(label="Gráfico")
 
 root.maxsize(900,600)
 
-root.geometry("900x600")
+root.geometry("300x200")
 
 root.resizable(0,0)
 
@@ -43,20 +43,44 @@ root.title("EMG")
 mainframe = ttk.Frame(root)
 
 
+aux = ''
+
 button_explore = Button(root, text = "Abrir arquivo", command = browseFiles)
-button_exit = Button(root, text="Sair", command=exit)
+button_exit = Button(root, text="Sair", command= lambda: [stop(False), exit()])
 
 
 
-button_explore.pack()
+
+
+
+thread1 = ''
+thread2 = ''
+thread_timer = ''
+
+
+button_record = Button(root, text= "Gravar", command=recordAudio)
+
+
+button_record.grid(column=0, row=0)
+
+button_explore.grid(column=1, row=0)
   
 
-button_exit.pack()
+button_exit.grid(column=2, row=0)
 
 
-recorder(root)
-recordAudio(root)
+
+
+#record(root)
+#recordAudio(root)
+
+
+
+root.rowconfigure(0, weight=4)
+root.rowconfigure(1, weight=1)
+
 
 
 root.mainloop()
+
 

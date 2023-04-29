@@ -2,6 +2,7 @@ from tkinter import *
 from tkinter import ttk
 from tkinter import filedialog
 from tkinter import filedialog
+from tkinter import messagebox as mb
 
 import threading
 
@@ -9,14 +10,15 @@ import os
 
 import sys
 sys.path.append('./modules')
-import arquivo
-import player
+from modules.arquivo import arquivo
+from modules.player import player
 
 import numpy as np
 
 import tkinter as tk
 import scipy.io
 import scipy.io.wavfile
+import time
 
 import matplotlib.pyplot as plt
 import matplotlib
@@ -39,11 +41,6 @@ def browseFiles():
             filename = filedialog.askopenfilename(initialdir = "/", title = "Select a File", 
                 filetypes = (("Wav files", '*.wav'),)
             )
-            
-            # Change label contents
-            #label_file_explorer.configure(text="Arquivo Aberto: "+filename)
-
-
 
             newWindow = Toplevel()
 
@@ -91,12 +88,18 @@ def browseFiles():
 
             button_analise = Button(newWindow, text= "Análise", command= analiseFile)
 
+            button_exit = Button(newWindow, text="Sair", command=newWindow.destroy)
+
             button_save.pack()
             button_analise.pack()
+            button_exit.pack()
 
+            plt.close()
+        
         except Exception as e:
-            print('opa')
-            print(e)        
+            print('Algo deu errado...')
+            print(e)
+            pass        
 
 def saveFile(filename):
    
@@ -134,6 +137,7 @@ def saveFile(filename):
         
     plt.savefig(os.path.join(my_path,my_file))
     
+    plt.close()
 
     print('ok')
     
@@ -152,11 +156,23 @@ def showFigures():
 
      Label(newWindow, text= "Janela aberta com o botão").pack()
 
-def recordAudio(root):
+def recordAudio():
+
+    plt.close()
+
+    newWindow = Toplevel()
+
+    newWindow.title('Live Audio')
+
+    newWindow.geometry("900x500")
+
+    newWindow.resizable(0,0)
+
+    Label(newWindow, text= "Janela grafico live").grid()
 
     device = 0 # id of the audio device by default
     window = 1000 # window for the data
-    downsample = 4 # how much samples to drop (inicialmente era 1)
+    downsample = 1 # how much samples to drop (inicialmente era 1)
     channels = [1] # a list of audio channels
     interval = 30 # this is update interval in miliseconds for plot
 
@@ -235,10 +251,24 @@ def recordAudio(root):
 
     
 
-    canvas = FigureCanvasTkAgg(fig, root)
+    canvas = FigureCanvasTkAgg(fig, newWindow)
     ani  = FuncAnimation(fig,update_plot, interval=interval,blit=True)
     canvas.draw()
-    canvas.get_tk_widget().pack()
+    canvas.get_tk_widget().grid(column=0, row=1)
+
+
+    thread1 = ''
+    aux = '' 
+
+    file = arquivo()
+
+    button_start = Button(newWindow, text= "Iniciar", command=lambda: [run_thread(thread1,record,file)])
+    button_pause = Button (newWindow, text= "Parar", command=lambda: [stop(True)])
+    button_exit = Button(newWindow, text="Sair", command= lambda: [stop(False), newWindow.destroy()])
+
+    button_start.grid(column=0, row=2)
+    button_pause.grid(column=1, row=2)
+    button_exit.grid(column=2, row=2)
     
     
 
@@ -249,98 +279,180 @@ def recordAudio(root):
     with stream:
       plt.show()
 
-class player:
-
-    def __init__(self):
-        self.on = False
-
     
-    def switch_on(self, value):
-        self.on = value
-
-    def get_on(self):
-        return self.on
+    vasco = file.get_audiofile_path()
+    #print(vasco)
 
 
-def recorder(root):
 
+tocar = player() 
+
+
+def record(file):
+        
     
-
-    tocar = player()
-
-    
-
-
-    def record():
-        #logica para gravar audio
+    #logica para gravar audio
         
 
-        tocar.switch_on(True)
+    #root.event_generate("<<vasco>>", when="tail")
 
 
-        audio = pyaudio.PyAudio()
 
-        stream = audio.open(format=pyaudio.paInt16, channels=1, rate=44100, input=True, frames_per_buffer=1024)
+    tocar.switch_on(True)
+
+    tocar.start_timer()
+
+    audio = pyaudio.PyAudio()
+
+    stream = audio.open(format=pyaudio.paInt16, channels=1, rate=44100, input=True, frames_per_buffer=1024)
 
 
-        frames = []
-        
-            
+    frames = []
+               
 
          
-        print("Gravando áudio...")
+    print("Gravando áudio...")
 
+    while tocar.get_on():
+        data = stream.read(1024)
+        frames.append(data)
+
+    stream.stop_stream()
+    stream.close()
+    audio.terminate()
+
+    try:
+        os.makedirs('./audio')
+    except:
+        pass
+
+
+    #conta o número de arquivos na pasta audio para numerar os arquivos salvos
+    lst = os.listdir('./audio') 
+    number_files = len(lst)
+
+
+    str_number = str(number_files)
+
+    if(number_files > 10):
+        str_number = str_number.zfill(3)
+    else:
+        str_number = str_number.zfill(3)
+
+    novo_arquivo = './audio/audio' + str_number + '.wav' 
+
+    sound_file = wave.open(novo_arquivo, 'wb')
+    sound_file.setnchannels(1)
+    sound_file.setsampwidth(audio.get_sample_size(pyaudio.paInt16))
+    sound_file.setframerate(44100)
+    sound_file.writeframes(b''.join(frames))
+    sound_file.close()
+
+    #Guarda o caminho da arquivo de áudio em uma classe
+    file.set_audiofile_path(novo_arquivo)
+
+
+    filepath = file.get_audiofile_path()
+
+
+    name = filepath.split('/')
+    name = name[-1]
+
+    dataset_path = os.path.join(filepath) 
+    wavedata = os.path.join(dataset_path)
         
-        while tocar.get_on():
-            data = stream.read(1024)
-            frames.append(data)
+    sampleRate, audioBuffer = scipy.io.wavfile.read(wavedata)
 
-        stream.stop_stream()
-        stream.close()
-        audio.terminate()
-
-        try:
-            os.makedirs('./audio')
-        except:
-            pass
+    duracao = len(audioBuffer)/sampleRate
 
 
-        #conta o número de arquivos na pasta audio para numerar os arquivos salvos
-        lst = os.listdir('./audio') 
-        number_files = len(lst)
+    tempo = np.arange(0,duracao,1/sampleRate)
+            
+    fig = plt.figure(figsize=(5,5), dpi=100)
 
-        novo_arquivo = './audio/audio' + str(number_files) + '.wav' 
+    a = fig.add_subplot(111)
 
-        sound_file = wave.open(novo_arquivo, 'wb')
-        sound_file.setnchannels(1)
-        sound_file.setsampwidth(audio.get_sample_size(pyaudio.paInt16))
-        sound_file.setframerate(44100)
-        sound_file.writeframes(b''.join(frames))
-        sound_file.close()
+    a.plot(tempo, audioBuffer/10000)
 
-        print('Gravação finalizada')
+    plt.xlabel('Tempo [s]')
+    plt.ylabel('Amplitude [Hz]')
+    plt.title(name)
+
+    try:
+        os.makedirs('./figures')
+    except:
+        pass
+
+    my_path = './figures'
+    name = name.split('.')
+    my_file = name[0] + '.png'
+        
+    plt.savefig(os.path.join(my_path,my_file))
 
 
-    def stop():
-        tocar.switch_on(False)
+    file.set_imagefile_path(os.path.join(my_path,my_file))
+
+    str_mensagem = "Salvo como " + name[0]
+
+    mb.showinfo(title = "Aúdio Gravado!", message = str_mensagem)
+
+    print('Gravação finalizada')
+
+
+
+
+def stop(wait):
+    tocar.switch_on(False)
+    tocar.stop_timer()
 
     
-    def run_thread(x, func, *args):
-        #x = threading.Thread(target=func).start()
-        if args:
-            x = threading.Thread(target=func, args=(args[0],)).start()
-        else:
-            x = threading.Thread(target=func).start()
+    if wait:
+        time.sleep(1)
+
+    plt.close()
+    #window.destroy()
+
+    
+def run_thread(thread, func, *args):
+    if args:
+        thread = threading.Thread(target=func, args=(args[0],)).start()
+    else:
+        thread = threading.Thread(target=func).start()
             
+
+def run_daemon(thread, func, *args):
+    if args:
+        thread = threading.Thread(target=func, args=(args[0],))
+    else:
+        thread = threading.Thread(target=func).start()
+    
+    thread.setDaemon(True)
+    thread.start()
+
+def changeLabel(texto):
+    textoGravando.set(texto)
+
 
     thread1 = ''
     thread2 = ''
 
-    button_record = Button(root, text= "Gravar", command=lambda: run_thread(thread1,record))
-    button_pause = Button (root, text= "Parar", command=lambda: run_thread(thread2,stop))
+def timer(root):
+    label = Label(root, text= "Janela aberta com o botão")
+    label.grid(column=0, row=3)
+
+    #root.event_generate('<<vasco>>')
     
 
+    start_time = time.time()
+    lap_time = start_time
 
+    while tocar.get_timer():
+        lap_time = round(time.time() - start_time)
+        total_time = str(lap_time)
+        print(total_time)
+        #label.config(text=total_time)
+        time.sleep(1)
 
-    button_record.pack()
-    button_pause.pack()
+   
+
+    
