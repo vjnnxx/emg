@@ -9,11 +9,16 @@ from modules.functions import arquivo
 import numpy as np
 
 import os
-import scipy.io
-import scipy.io.wavfile
+
+
+
+import matplotlib
 
 import matplotlib.pyplot as plt
-import matplotlib
+
+from matplotlib.figure import Figure
+
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg 
 
 
 
@@ -22,9 +27,66 @@ def printar():
     print('Botão foi clicado!')
 
 
+class Canvas(FigureCanvasQTAgg):
+
+    def __init__(self, parent=None, width=5, height=4, dpi=100):
+        fig = Figure(figsize=(width, height), dpi=dpi)
+
+        self.ax = fig.add_subplot(111)
+        self.ax.set_xlabel('Tempo [s]')
+        self.ax.set_ylabel('Amplitude [Hz]')
+        
+        super(Canvas, self).__init__(fig)
+
+        
+
+#Janela de gráfico dos arquivos externos
+
+
+class figureWindow(QWidget):
+
+
+            
+    def __init__(self, file):
+        super().__init__()
+
+        layout = QVBoxLayout()
+
+        self.label = QLabel(file.nome_arquivo)
+        self.label.setAlignment(Qt.AlignCenter)
+        layout.addWidget(self.label)
+
+
+        
+        
+
+        canva = Canvas()
+        canva.ax.set_title(file.nome_arquivo)
+
+        canva.ax.plot(file.tempo, file.audioBuffer/10000)
+
+
+        layout.addWidget(canva)
+
+        botaoSalvar = QPushButton('Salvar')
+        botaoSalvar.clicked.connect(lambda:self.salvar_imagem(file))
+
+        layout.addWidget(botaoSalvar)
+
+
+        self.setLayout(layout)
+
+
+    def salvar_imagem(self, file):
+        
+        file.salvar_figura()
+
+
+
+
 
 #Janela principal do app
-class Window(QMainWindow):
+class MainWindow(QMainWindow):
 
 
     def abrir_arquivo(self):
@@ -35,46 +97,23 @@ class Window(QMainWindow):
         if dialog.exec():
             filename = dialog.selectedFiles()
 
-            filename = filename[0]
+            caminho = filename[0]
 
-            print(filename)
 
             file = arquivo()
 
-            name = filename.split('/')
-            name = name[-1]
-
-            file = arquivo()
-
-            file.path = filename
-
-            dataset_path = os.path.join(file.path) 
-            file.wavedata = os.path.join(dataset_path)
-
-            file.sampleRate, file.audioBuffer = scipy.io.wavfile.read(file.wavedata)
-
-            duracao = len(file.audioBuffer)/file.sampleRate
-
-
-            tempo = np.arange(0,duracao,1/file.sampleRate)
+            file.tratar_wav(caminho)
             
-            fig = plt.figure(figsize=(5,5), dpi=100)
 
-            a = fig.add_subplot(111)
+            self.abrir_janela_arquivo(file)
 
-            a.plot(tempo, file.audioBuffer/10000)
+            
 
-            plt.xlabel('Tempo [s]')
-            plt.ylabel('Amplitude [Hz]')
-            plt.title(name)
+    def abrir_janela_arquivo(self, file):
+        self.janela = figureWindow(file)
 
 
-            self.wid = QWidget()
-            self.wid.resize(250, 150)
-            self.wid.setWindowTitle('Arquivo Externo')
-            self.wid.show()
-
-            plt.show()
+        self.janela.show()
 
 
 
@@ -118,7 +157,12 @@ class Window(QMainWindow):
 app = QApplication()
 app.setStyleSheet(load_stylesheet())
 
-janela = Window()
+janela = MainWindow()
 janela.show()
 
 app.exec()
+
+
+'''
+            
+            '''
