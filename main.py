@@ -1,11 +1,12 @@
 from qdarktheme import load_stylesheet
+import time
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QFont, QAction
 from PySide6.QtWidgets import ( 
-    QApplication, QLabel, QPushButton, QWidget, QVBoxLayout, QMainWindow, QFileDialog)
+    QApplication, QLabel, QPushButton, QWidget, QVBoxLayout, QMainWindow, QFileDialog, QLineEdit, QDialog, QDialogButtonBox)
 
 from modules.functions import arquivo
-
+from modules.dialogo import salvoDialog
 import numpy as np
 
 import os
@@ -40,9 +41,14 @@ class Canvas(FigureCanvasQTAgg):
 
         
 
+#Janela de dialogo para
+'''
+'''           
+
+            
+
+
 #Janela de gráfico dos arquivos externos
-
-
 class figureWindow(QWidget):
 
 
@@ -54,11 +60,9 @@ class figureWindow(QWidget):
 
         self.label = QLabel(file.nome_arquivo)
         self.label.setAlignment(Qt.AlignCenter)
-        layout.addWidget(self.label)
-
-
+        layout.addWidget(self.label)     
         
-        
+      
 
         canva = Canvas()
         canva.ax.set_title(file.nome_arquivo)
@@ -71,7 +75,12 @@ class figureWindow(QWidget):
         botaoSalvar = QPushButton('Salvar')
         botaoSalvar.clicked.connect(lambda:self.salvar_imagem(file))
 
+        botaoAnalise = QPushButton('Análise')
+        botaoAnalise.clicked.connect(self.analise)
+
         layout.addWidget(botaoSalvar)
+
+        layout.addWidget(botaoAnalise)
 
 
         self.setLayout(layout)
@@ -80,6 +89,18 @@ class figureWindow(QWidget):
     def salvar_imagem(self, file):
         
         file.salvar_figura()
+
+        time.sleep(1)
+
+        salvoDialog()
+
+
+
+
+    def analise(self):
+        print('Analisar')
+
+    
 
 
 
