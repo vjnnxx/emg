@@ -1,106 +1,33 @@
 from qdarktheme import load_stylesheet
-import time
-from PySide6.QtCore import Qt
+from PySide6.QtCore import (Qt)
 from PySide6.QtGui import QFont, QAction
 from PySide6.QtWidgets import ( 
     QApplication, QLabel, QPushButton, QWidget, QVBoxLayout, QMainWindow, QFileDialog, QLineEdit, QDialog, QDialogButtonBox)
 
-from modules.functions import arquivo
-from modules.dialogo import salvoDialog
+from modules.arquivo import arquivo
+
+from modules.signalWindow import signalWindow
+
 import numpy as np
 
-import os
+import queue
+import sounddevice as sd
 
-
+from modules.figureWindow import figureWindow
 
 import matplotlib
 
 import matplotlib.pyplot as plt
-
-from matplotlib.figure import Figure
-
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg 
+from matplotlib.animation import FuncAnimation
+
+
 
 
 
 
 def printar():
     print('Botão foi clicado!')
-
-
-class Canvas(FigureCanvasQTAgg):
-
-    def __init__(self, parent=None, width=5, height=4, dpi=100):
-        fig = Figure(figsize=(width, height), dpi=dpi)
-
-        self.ax = fig.add_subplot(111)
-        self.ax.set_xlabel('Tempo [s]')
-        self.ax.set_ylabel('Amplitude [Hz]')
-        
-        super(Canvas, self).__init__(fig)
-
-        
-
-#Janela de dialogo para
-'''
-'''           
-
-            
-
-
-#Janela de gráfico dos arquivos externos
-class figureWindow(QWidget):
-
-
-            
-    def __init__(self, file):
-        super().__init__()
-
-        layout = QVBoxLayout()
-
-        self.label = QLabel(file.nome_arquivo)
-        self.label.setAlignment(Qt.AlignCenter)
-        layout.addWidget(self.label)     
-        
-      
-
-        canva = Canvas()
-        canva.ax.set_title(file.nome_arquivo)
-
-        canva.ax.plot(file.tempo, file.audioBuffer/10000)
-
-
-        layout.addWidget(canva)
-
-        botaoSalvar = QPushButton('Salvar')
-        botaoSalvar.clicked.connect(lambda:self.salvar_imagem(file))
-
-        botaoAnalise = QPushButton('Análise')
-        botaoAnalise.clicked.connect(self.analise)
-
-        layout.addWidget(botaoSalvar)
-
-        layout.addWidget(botaoAnalise)
-
-
-        self.setLayout(layout)
-
-
-    def salvar_imagem(self, file):
-        
-        file.salvar_figura()
-
-        time.sleep(1)
-
-        salvoDialog()
-
-
-
-
-    def analise(self):
-        print('Analisar')
-
-    
 
 
 
@@ -110,6 +37,7 @@ class figureWindow(QWidget):
 class MainWindow(QMainWindow):
 
 
+    #Abre janela do windows para selecionar arquivos .wav
     def abrir_arquivo(self):
         dialog = QFileDialog(self)
         dialog.setFileMode(QFileDialog.FileMode.ExistingFiles)
@@ -128,13 +56,30 @@ class MainWindow(QMainWindow):
 
             self.abrir_janela_arquivo(file)
 
-            
+    
+
+
 
     def abrir_janela_arquivo(self, file):
         self.janela = figureWindow(file)
 
 
         self.janela.show()
+
+    def abrir_janela_sinal(self):
+        self.janela = signalWindow()
+
+        self.janela.show()
+
+
+    def gravar_sinal(self):
+        print('Gravar sinal')
+
+
+    def rodar_grafico(self, layout):
+        worker = Worker(layout)
+        self.threadpool.start(worker)
+
 
 
 
@@ -160,15 +105,32 @@ class MainWindow(QMainWindow):
 
 
         #Criando label
-        self.label = QLabel('Salve Crias!')
+        self.label = QLabel('Bem Vindo!')
         self.label.setFont(font)
         self.label.setAlignment(Qt.AlignCenter)
         layout.addWidget(self.label)
 
-        botaoGravar = QPushButton('Abrir arquivo')
+        botaoAbrir = QPushButton('Abrir arquivo')
+        botaoAbrir.setFont(font)
+        botaoAbrir.clicked.connect(self.abrir_arquivo)
+        layout.addWidget(botaoAbrir)
+
+        botaoGravar = QPushButton('Gravar Sinal')
         botaoGravar.setFont(font)
-        botaoGravar.clicked.connect(self.abrir_arquivo)
+        botaoGravar.clicked.connect(self.abrir_janela_sinal)
+
         layout.addWidget(botaoGravar)
+
+        #canva = Canvas()
+
+        #layout.addWidget(canva)
+
+
+        ''' DAQUI PRA BAIXO É BARRA'''
+        
+        #self.rodar_grafico(layout)
+
+
 
         base.setLayout(layout)
         self.setCentralWidget(base)
@@ -183,7 +145,3 @@ janela.show()
 
 app.exec()
 
-
-'''
-            
-            '''
