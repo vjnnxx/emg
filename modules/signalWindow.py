@@ -1,139 +1,75 @@
-import time
-
-
-from PySide6.QtCore import Qt
-from PySide6.QtWidgets import (QWidget, QVBoxLayout, QLabel, QPushButton)
-
-from modules.dialogo import salvoDialog
-
-from modules.canvas import Canvas
-
-import queue
-
-import numpy as np
-
-import matplotlib.pyplot as plt
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg 
-from matplotlib.animation import FuncAnimation
-
+import sys
 import sounddevice as sd
+import matplotlib.pyplot as plt
+from PySide6.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QWidget, QPushButton
+from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
 
-#Janela de gráfico dos arquivos externos
 class signalWindow(QWidget):
-
-
-            
     def __init__(self):
         super().__init__()
 
+
+        # Cria um layout vertical
         layout = QVBoxLayout()
 
-        self.setWindowTitle('Sinal live')
-
-        self.label = QLabel('Sinal Live')
-
-
-        layout.addWidget(self.label) 
-
-        device = 0 # id of the audio device by default
-        window = 1000 # window for the data
-        downsample = 1 # how much samples to drop (inicialmente era 1)
-        channels = [1] # a list of audio channels
-        interval = 30 # this is update interval in miliseconds for plot
-
-        # lets make a queue
-        q = queue.Queue()
-        
-        device_info =  sd.query_devices(device, 'input')
-        samplerate = device_info['default_samplerate']
-        length  = int(window*samplerate/(1000*downsample))
-
-    
-        print("Sample Rate: ", samplerate)
-
-        
-
-        # Now we require a variable to hold the samples 
-
-        plotdata =  np.zeros((length,len(channels)))
-        # Lets look at the shape of this plotdata 
-        print("plotdata shape: ", plotdata.shape)
-        # So its vector of length 44100
-        # Or we can also say that its a matrix of rows 44100 and cols 1
-
-        # next is to make fig and axis of matplotlib plt
-        fig,ax = plt.subplots(figsize=(8,4))
-
-        
-
-        # lets set the title
-        ax.set_title("Entrada de áudio")
-
-        # Make a matplotlib.lines.Line2D plot item of color green
-        # R,G,B = 0,1,0.29
-
-        lines = ax.plot(plotdata,color = (0,1,0.29))
-
-        # We will use an audio call back function to put the data in queue
-
-        def audio_callback(indata,frames,time,status):
-            q.put(indata[::downsample,[0]])
-
-        # now we will use an another function 
-        # It will take frame of audio samples from the queue and update
-        # to the lines
-
-        def update_plot(frame):
-            nonlocal plotdata
-            while True:
-                try: 
-                    data = q.get_nowait()
-                except queue.Empty:
-                    break
-                shift = len(data)
-                plotdata = np.roll(plotdata, -shift,axis = 0)
-                # Elements that roll beyond the last position are 
-                # re-introduced 
-                plotdata[-shift:,:] = data
-                
-            for column, line in enumerate(lines):
-                line.set_ydata(plotdata[:,column])
-            return lines
-        ax.set_facecolor((0,0,0))
-        # Lets add the grid
-        #ax.set_yticks([1])
-        ax.yaxis.grid(True)
-
-        """ INPUT FROM MIC """
-
-        stream  = sd.InputStream( device = device, channels = max(channels), samplerate = samplerate, callback  = audio_callback)
-
-
-        """ OUTPUT """		
-
-
-        plt.ylim(top=1)
-
-        
-
-        canvas = FigureCanvasQTAgg(fig)
-        ani  = FuncAnimation(fig,update_plot, interval=interval,blit=True)
+        # Cria um FigureCanvas e adiciona ao layout
         
         
-        
-        canvas.draw()
+        self.figure = plt.figure()
+        self.canvas = FigureCanvas(self.figure)
+        layout.addWidget(self.canvas)
+
+        # Variáveis do gráfico
+        self.num_frames = 1000  # Número de frames a serem mostrados no gráfico
+        self.zoom_factor = 2  # Fator de zoom in/out
+
+        # Dados do gráfico
+        self.x_data = range(self.num_frames)
+        self.y_data = [0] * self.num_frames
 
 
-        plt.ylabel("Amplitude")    
+        # Configurações da entrada de áudio ao vivo
+        self.sample_rate = 44100  # Taxa de amostragem em Hz
+        self.block_size = 1024  # Tamanho do bloco de áudio
 
-        
-        layout.addWidget(canvas)
+        # Plota o gráfico inicial
+        self.line, = plt.plot(self.x_data, self.y_data)
 
+        # Variáveis de controle de atualização
+        self.update_counter = 0
+        self.update_limit = 10  # Limite de atualizações antes de redesenhar o canvas
 
-        with stream:
-            plt.show() 
-          
-        
-      
+        # Inicia a captura de áudio ao vivo
+        self.stream = sd.InputStream(callback=self.callback, channels=1, samplerate=self.sample_rate, blocksize=self.block_size)
+        self.stream.start()
+
 
         self.setLayout(layout)
+
+
+        
+
+    def update_plot(self, indata):
+        # Atualiza os dados do gráfico
+        self.y_data[:-1] = self.y_data[1:]  # Desloca os valores existentes para a esquerda
+        self.y_data[-1] = indata  # Adiciona o novo valor no final
+
+        # Atualiza o gráfico com os novos dados
+        self.line.set_ydata(self.y_data)
+
+        # Atualiza o canvas
+        self.canvas.draw()
+
+
+    # Função de callback para atualizar o gráfico do FigureCanvas
+    def callback(self, indata, frames, time, status):
+        self.update_plot(indata[0])  # Atualiza o gráfico com o primeiro valor do áudio
+
+        
+
+
+        
+
+        
+
+        

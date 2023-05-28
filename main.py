@@ -1,36 +1,26 @@
+import sys
 from qdarktheme import load_stylesheet
 from PySide6.QtCore import (Qt)
+from PySide6 import QtCore
 from PySide6.QtGui import QFont, QAction
 from PySide6.QtWidgets import ( 
     QApplication, QLabel, QPushButton, QWidget, QVBoxLayout, QMainWindow, QFileDialog, QLineEdit, QDialog, QDialogButtonBox)
 
+
 from modules.arquivo import arquivo
 
 from modules.signalWindow import signalWindow
+from modules.figureWindow import figureWindow
 
 import numpy as np
 
 import queue
 import sounddevice as sd
 
-from modules.figureWindow import figureWindow
-
-import matplotlib
-
-import matplotlib.pyplot as plt
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg 
-from matplotlib.animation import FuncAnimation
-
-
-
-
 
 
 def printar():
     print('Botão foi clicado!')
-
-
-
 
 
 #Janela principal do app
@@ -56,8 +46,6 @@ class MainWindow(QMainWindow):
 
             self.abrir_janela_arquivo(file)
 
-    
-
 
 
     def abrir_janela_arquivo(self, file):
@@ -67,9 +55,10 @@ class MainWindow(QMainWindow):
         self.janela.show()
 
     def abrir_janela_sinal(self):
-        self.janela = signalWindow()
+        self.signal = signalWindow()
 
-        self.janela.show()
+        
+        self.signal.show()
 
 
     def gravar_sinal(self):
@@ -77,14 +66,20 @@ class MainWindow(QMainWindow):
 
 
     def rodar_grafico(self, layout):
-        worker = Worker(layout)
-        self.threadpool.start(worker)
+        print('rodando')
+        #self.threadpool.start(worker)
 
+
+
+    def selecionar_dispositivo(self, devices):
+        #Fazer select com nomes de dispositivos de entrada em um dialog
+        print(devices)
 
 
 
     def __init__(self):
         super().__init__()
+        self.setAttribute(QtCore.Qt.WA_DeleteOnClose)
 
         base = QWidget()
         layout = QVBoxLayout()
@@ -99,6 +94,29 @@ class MainWindow(QMainWindow):
         file_menu.addAction(action)
 
 
+        dispositivos = sd.query_devices()
+
+        #Cria opção no menu superior para selecionar dispositivos de audio
+
+        audio_menu = menu.addMenu('Dispositivo de áudio')
+
+       
+
+        input_devices = []
+
+
+        for x in range(len(dispositivos)):
+            if dispositivos[x]['max_input_channels'] > 0:
+                action = { 'id': x, 'nome_dispositivo': dispositivos[x]['name']}
+                input_devices.append(action)
+
+
+        device_select_action = QAction('Selecionar dispositivo', self)
+        audio_menu.addAction(device_select_action)
+        device_select_action.triggered.connect(lambda:self.selecionar_dispositivo(input_devices))
+
+        
+
         #Criando fonte e aplicando configurações
         font = QFont()
         font.setPixelSize(90)
@@ -109,39 +127,34 @@ class MainWindow(QMainWindow):
         self.label.setFont(font)
         self.label.setAlignment(Qt.AlignCenter)
         layout.addWidget(self.label)
+        
 
+        #Cria botão para abrir arquivo e adiciona botão ao layout
         botaoAbrir = QPushButton('Abrir arquivo')
         botaoAbrir.setFont(font)
         botaoAbrir.clicked.connect(self.abrir_arquivo)
         layout.addWidget(botaoAbrir)
 
+
+        #Cria botão para gravar sinal e adiciona ao layout
         botaoGravar = QPushButton('Gravar Sinal')
         botaoGravar.setFont(font)
         botaoGravar.clicked.connect(self.abrir_janela_sinal)
 
         layout.addWidget(botaoGravar)
-
-        #canva = Canvas()
-
-        #layout.addWidget(canva)
-
-
-        ''' DAQUI PRA BAIXO É BARRA'''
-        
-        #self.rodar_grafico(layout)
-
-
+       
 
         base.setLayout(layout)
         self.setCentralWidget(base)
 
 
 
-app = QApplication()
+app = QApplication(sys.argv)
 app.setStyleSheet(load_stylesheet())
 
 janela = MainWindow()
 janela.show()
 
-app.exec()
+sys.exit(app.exec())
+
 
