@@ -11,12 +11,15 @@ from modules.arquivo import arquivo
 
 from modules.signalWindow import signalWindow
 from modules.figureWindow import figureWindow
+from modules.device_window import deviceWindow
+from modules.config import config
 
 import numpy as np
 
 import queue
 import sounddevice as sd
 
+config = config()
 
 
 def printar():
@@ -73,7 +76,15 @@ class MainWindow(QMainWindow):
 
     def selecionar_dispositivo(self, devices):
         #Fazer select com nomes de dispositivos de entrada em um dialog
-        print(devices)
+
+        self.device_window = deviceWindow(devices, config)
+        self.device_window.setWindowTitle("Selecionar dispositivo")
+        self.device_window.setGeometry(200, 200, 400, 300)
+
+        self.device_window.show()
+        
+
+        #print(devices)
 
 
 

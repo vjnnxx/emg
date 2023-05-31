@@ -1,2 +1,5 @@
 /figures
 /_pycache_
+/modules/_pycache_
+/database/_pycache_
+emg.db
