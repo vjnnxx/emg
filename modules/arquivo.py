@@ -1,5 +1,9 @@
 import numpy as np
 
+from database.db import (create_wav_data, get_conn)
+
+from datetime import date
+
 import matplotlib.pyplot as plt
 import os
 
@@ -90,10 +94,29 @@ class arquivo:
         my_path = './figures'
         name = self.nome_arquivo.split('.')
         my_file = name[0] + '.png'
+
+
+        final_image_path = os.path.join(my_path,my_file)
             
-        plt.savefig(os.path.join(my_path,my_file))
+        plt.savefig(final_image_path)
         
         plt.close()
+
+        
+
+        today = date.today()
+
+        # dd/mm/YY
+        data_atual = today.strftime("%d/%m/%Y")
+       
+
+        data = (my_file, data_atual, self.duracao, final_image_path, '',self.audioBuffer)
+        
+        conn = get_conn()
+
+        cursor = conn.cursor()
+
+        create_wav_data(conn=conn, wav_data = data)
 
         print('ok')
 
