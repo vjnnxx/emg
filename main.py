@@ -14,12 +14,16 @@ from modules.figureWindow import figureWindow
 from modules.device_window import deviceWindow
 from modules.config import config
 
+from database.db import (selec_config_by_name, get_conn)
+
 import numpy as np
 
 import queue
 import sounddevice as sd
 
 config = config()
+
+conn = get_conn()
 
 
 def printar():
@@ -58,10 +62,20 @@ class MainWindow(QMainWindow):
         self.janela.show()
 
     def abrir_janela_sinal(self):
-        self.signal = signalWindow()
+
+        input_settings = selec_config_by_name(conn)
+
+
+
+       #print(input_settings)
+
+        self.signal = signalWindow(2)
 
         
         self.signal.show()
+
+    def abrir_janela_analises(self):
+        print('Finge que abriu ai')
 
 
     def gravar_sinal(self):
@@ -91,6 +105,7 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setAttribute(QtCore.Qt.WA_DeleteOnClose)
+        self.setWindowTitle('EMG')
 
         base = QWidget()
         layout = QVBoxLayout()
@@ -139,6 +154,13 @@ class MainWindow(QMainWindow):
         self.label.setAlignment(Qt.AlignCenter)
         layout.addWidget(self.label)
         
+
+        #Cria botão para listar análises salvas
+
+        botaoAnalises = QPushButton('Análises')
+        botaoAnalises.setFont(font)
+        botaoAnalises.clicked.connect(self.abrir_janela_analises)
+        layout.addWidget(botaoAnalises)
 
         #Cria botão para abrir arquivo e adiciona botão ao layout
         botaoAbrir = QPushButton('Abrir arquivo')

@@ -8,6 +8,8 @@ def get_conn():
         print(e)
     return conn
 
+
+'''Operações da tabela wav_data'''
 def select_all_wav_data(conn):
     cursor = conn.cursor()
 
@@ -38,14 +40,39 @@ def create_wav_data(conn, wav_data):
 
     return cursor.lastrowid
 
+'''Operações da tabela configs'''
 
+def create_config(conn, config):
+
+    sql = "INSERT INTO configs(name, config) VALUES (?, ?);"
+
+    cursor = conn.cursor()
+
+    cursor.execute(sql, config)
+
+    conn.commit()
+
+    return cursor.lastrowid
+
+def selec_config_by_name(conn):
+    sql = "SELECT * FROM configs WHERE name= 'input_device'"
+
+    cursor = conn.cursor()
+
+    input = cursor.execute(sql).fetchone()
+
+    return input
+
+
+
+'''Função para criar tabelas'''
 
 def create_tables(conn):
 
     cursor = con.cursor()
 
     try:
-        sql = "CREATE TABLE config (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT , config VARCHAR(100));"
+        sql = "CREATE TABLE configs (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, name VARCHAR(30), config VARCHAR(100));"
         cursor.execute(sql)
         print("Tabela config criada com sucesso!")
     except Exception:
@@ -60,6 +87,7 @@ def create_tables(conn):
 
 con = get_conn()
 
-select_all_wav_data(con)
+
+
 
 

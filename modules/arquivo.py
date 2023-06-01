@@ -69,6 +69,8 @@ class arquivo:
 
             self.set_tempo(tempo)
 
+
+    #Função para tratar os dados e salvar a figura
     def salvar_figura(self):
 
         if(self.audioBuffer == '' or self.tempo == ''):
@@ -110,15 +112,11 @@ class arquivo:
         data_atual = today.strftime("%d/%m/%Y")
        
 
-        data = (my_file, data_atual, self.duracao, final_image_path, '',self.audioBuffer)
+        data = (my_file, data_atual, self.duracao_audio, final_image_path, '',self.audioBuffer)
         
         conn = get_conn()
 
-        cursor = conn.cursor()
-
         create_wav_data(conn=conn, wav_data = data)
-
-        print('ok')
 
        
 

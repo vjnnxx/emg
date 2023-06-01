@@ -5,7 +5,7 @@ from PySide6.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QWidget, Q
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
 
 class signalWindow(QWidget):
-    def __init__(self):
+    def __init__(self, input_device):
         super().__init__()
 
 
