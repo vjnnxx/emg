@@ -13,12 +13,11 @@ def get_conn():
 def select_all_wav_data(conn):
     cursor = conn.cursor()
 
-    sql = 'SELECT * FROM wav_data'
+    sql = 'SELECT id, nome, data, duracao, image_path, audio_path FROM wav_data'
 
     rows = cursor.execute(sql).fetchall()
-
-    for row in rows:
-        print(row)
+    
+    return rows
 
 def desc_wav_data(conn):
     cursor = conn.cursor()
@@ -43,12 +42,22 @@ def create_wav_data(conn, wav_data):
 '''Operações da tabela configs'''
 
 def create_config(conn, config):
+    
 
-    sql = "INSERT INTO configs(name, config) VALUES (?, ?);"
+    sql_delete = "DELETE FROM configs"
 
     cursor = conn.cursor()
 
-    cursor.execute(sql, config)
+    cursor.execute(sql_delete)
+
+    conn.commit()
+
+
+    sql_insert = "INSERT INTO configs(name, config) VALUES (?, ?);"
+
+    
+
+    cursor.execute(sql_insert, config)
 
     conn.commit()
 
