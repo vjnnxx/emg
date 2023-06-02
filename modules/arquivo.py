@@ -1,4 +1,5 @@
 import numpy as np
+import json 
 
 from database.db import (create_wav_data, get_conn)
 
@@ -9,6 +10,14 @@ import os
 
 import scipy.io
 import scipy.io.wavfile
+
+
+#classe para converter np array em JSON
+class NumpyEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, np.ndarray):
+            return obj.tolist()
+        return json.JSONEncoder.default(self, obj)
 
 class arquivo:
 
@@ -95,7 +104,7 @@ class arquivo:
 
         my_path = './figures'
         name = self.nome_arquivo.split('.')
-        my_file = name[0] + '.png'
+        my_file = '/' + name[0] + '.png'
 
 
         final_image_path = os.path.join(my_path,my_file)
@@ -111,8 +120,9 @@ class arquivo:
         # dd/mm/YY
         data_atual = today.strftime("%d/%m/%Y")
        
+        buffer_tratado = json.dumps(self.audioBuffer, cls=NumpyEncoder)
 
-        data = (my_file, data_atual, self.duracao_audio, final_image_path, '',self.audioBuffer)
+        data = (my_file, data_atual, self.duracao_audio, final_image_path, '', buffer_tratado)
         
         conn = get_conn()
 

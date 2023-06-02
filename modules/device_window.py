@@ -42,7 +42,7 @@ class deviceWindow(QWidget):
 
         salvoDialog()
 
-        print('Dispositivo escolhido: ' + self.selected)
+        print('Dispositivo escolhido: ' + str(self.selected))
 
         self.close()
 

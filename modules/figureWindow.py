@@ -37,13 +37,9 @@ class figureWindow(QWidget):
         botaoSalvar = QPushButton('Salvar')
         botaoSalvar.clicked.connect(lambda:self.salvar_imagem(file))
 
-        botaoAnalise = QPushButton('Análise')
-        botaoAnalise.clicked.connect(self.analise)
+    
 
         layout.addWidget(botaoSalvar)
-
-        layout.addWidget(botaoAnalise)
-
 
         self.setLayout(layout)
 
@@ -55,8 +51,5 @@ class figureWindow(QWidget):
 
         salvoDialog()
 
+        self.close()
 
-
-
-    def analise(self):
-        print('Analisar')

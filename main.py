@@ -1,4 +1,5 @@
 import sys
+import json
 from qdarktheme import load_stylesheet
 from PySide6.QtCore import (Qt)
 from PySide6 import QtCore
@@ -12,6 +13,7 @@ from modules.arquivo import arquivo
 from modules.signalWindow import signalWindow
 from modules.figureWindow import figureWindow
 from modules.device_window import deviceWindow
+from modules.listWindow import listWindow
 from modules.config import config
 
 from database.db import (selec_config_by_name, get_conn)
@@ -56,26 +58,26 @@ class MainWindow(QMainWindow):
 
 
     def abrir_janela_arquivo(self, file):
-        self.janela = figureWindow(file)
+        self.janela_arquivo = figureWindow(file)
 
 
-        self.janela.show()
+        self.janela_arquivo.show()
 
     def abrir_janela_sinal(self):
 
         input_settings = selec_config_by_name(conn)
 
+        device = json.loads(input_settings[2])
 
-
-       #print(input_settings)
-
-        self.signal = signalWindow(2)
+        self.signal = signalWindow(device['id'])
 
         
         self.signal.show()
 
     def abrir_janela_analises(self):
-        print('Finge que abriu ai')
+        self.janela_analises = listWindow()
+        self.janela_analises.show()
+        
 
 
     def gravar_sinal(self):
@@ -116,8 +118,6 @@ class MainWindow(QMainWindow):
         action = QAction('Ação', self)
         action.triggered.connect(printar)
         menu = self.menuBar()
-        file_menu = menu.addMenu('Menu')
-        file_menu.addAction(action)
 
 
         dispositivos = sd.query_devices()

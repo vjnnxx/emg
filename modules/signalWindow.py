@@ -31,6 +31,7 @@ class signalWindow(QWidget):
         # Configurações da entrada de áudio ao vivo
         self.sample_rate = 44100  # Taxa de amostragem em Hz
         self.block_size = 1024  # Tamanho do bloco de áudio
+        self.device = input_device
 
         # Plota o gráfico inicial
         self.line, = plt.plot(self.x_data, self.y_data)
@@ -40,7 +41,7 @@ class signalWindow(QWidget):
         self.update_limit = 10  # Limite de atualizações antes de redesenhar o canvas
 
         # Inicia a captura de áudio ao vivo
-        self.stream = sd.InputStream(callback=self.callback, channels=1, samplerate=self.sample_rate, blocksize=self.block_size)
+        self.stream = sd.InputStream(callback=self.callback, device=self.device,channels=1, samplerate=self.sample_rate, blocksize=self.block_size)
         self.stream.start()
 
 
