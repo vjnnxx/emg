@@ -58,5 +58,7 @@ class listWindow(QWidget):
 
         self.setLayout(layout)
 
+        self.setFixedSize(self.size())
+
 
     

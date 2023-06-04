@@ -43,6 +43,8 @@ class figureWindow(QWidget):
 
         self.setLayout(layout)
 
+        self.setFixedSize(self.size())
+
 
     def salvar_imagem(self, file):
         

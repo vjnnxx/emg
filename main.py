@@ -36,6 +36,12 @@ def printar():
 class MainWindow(QMainWindow):
 
 
+    #Fecha todas as janelas após fechar a main
+    def closeEvent(self, event):
+        for window in QApplication.topLevelWidgets():
+            window.close()
+
+
     #Abre janela do windows para selecionar arquivos .wav
     def abrir_arquivo(self):
         dialog = QFileDialog(self)
@@ -179,6 +185,8 @@ class MainWindow(QMainWindow):
 
         base.setLayout(layout)
         self.setCentralWidget(base)
+
+        self.setFixedSize(self.size())
 
 
 
