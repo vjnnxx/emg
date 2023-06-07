@@ -7,6 +7,7 @@ from datetime import date
 
 import matplotlib.pyplot as plt
 import os
+import posixpath
 
 import scipy.io
 import scipy.io.wavfile
@@ -104,10 +105,10 @@ class arquivo:
 
         my_path = './figures'
         name = self.nome_arquivo.split('.')
-        my_file = '/' + name[0] + '.png'
+        my_file = name[0] + '.png'
 
 
-        final_image_path = os.path.join(my_path,my_file)
+        final_image_path = posixpath.join(my_path,my_file)
             
         plt.savefig(final_image_path)
         
@@ -128,7 +129,6 @@ class arquivo:
 
         create_wav_data(conn=conn, wav_data = data)
 
-       
+        conn.close()
 
-    def debug(self):
-        print(self.path, self.wavedata, self.sampleRate, self.audioBuffer)
+    

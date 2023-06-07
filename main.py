@@ -52,14 +52,10 @@ class MainWindow(QMainWindow):
             filename = dialog.selectedFiles()
 
             caminho = filename[0]
-
-
-            file = arquivo()
-
-            file.tratar_wav(caminho)
             
 
-            self.abrir_janela_arquivo(file)
+            self.abrir_janela_arquivo(caminho)
+
 
 
 

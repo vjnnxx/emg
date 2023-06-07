@@ -7,7 +7,7 @@ class salvoDialog(QMessageBox):
     
 
 
-    def __init__(self):
+    def __init__(self, mensagem):
         super().__init__()
 
         self.setWindowIcon(QIcon('icon.png'))
@@ -18,7 +18,7 @@ class salvoDialog(QMessageBox):
 
 
         
-        self.setText('Registro Salvo com sucesso!')
+        self.setText(mensagem)
 
         self.setIcon(QMessageBox.Information)
 

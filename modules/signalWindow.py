@@ -1,12 +1,105 @@
 import sys
+import os
+import wave
 import sounddevice as sd
+import pyaudio
 import numpy as np
 import matplotlib.pyplot as plt
+
+from modules.arquivo import arquivo
+from modules.dialogo import salvoDialog
+
+from PySide6.QtCore import (QThreadPool)
 from PySide6.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QWidget, QPushButton
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
 
+class Player:
+
+    def __init__(self):
+        self.on = False
+
+    
+    def change_status(self, value):
+        self.on = value
+
+    def get_on(self):
+        return self.on
+
+
 class signalWindow(QWidget):
+    
+    #Roda a função iniciar_gravacao em uma thread diferente
+    def rodar_gravador(self):
+        self.thread_manager.start(self.iniciar_gravacao)
+
+
+    def iniciar_gravacao(self):
+        
+        self.gravador.change_status(True)
+
+        audio = pyaudio.PyAudio()
+
+        stream = audio.open(format=pyaudio.paInt16, channels=1, rate=44100, input=True, frames_per_buffer=1024)
+
+        frames = []
+
+        print("Gravando áudio...")
+
+        
+        while self.gravador.get_on():
+            data = stream.read(1024)
+            frames.append(data)
+
+        stream.stop_stream()
+        stream.close()
+        audio.terminate()
+
+        try:
+            os.makedirs('./audio')
+        except:
+            pass
+
+        #conta o número de arquivos na pasta audio para numerar os arquivos salvos
+        lst = os.listdir('./audio') 
+        number_files = len(lst)
+
+        novo_arquivo = './audio/audio' + str(number_files) + '.wav' 
+
+        sound_file = wave.open(novo_arquivo, 'wb')
+        sound_file.setnchannels(1)
+        sound_file.setsampwidth(audio.get_sample_size(pyaudio.paInt16))
+        sound_file.setframerate(44100)
+        sound_file.writeframes(b''.join(frames))
+        sound_file.close()
+
+        self.file.tratar_wav(novo_arquivo)
+
+        self.file.salvar_figura()
+
+        nome_str = 'audio' + str(number_files)
+
+        #self.thread_manager.start(salvoDialog(nome_str + "Áudio gravado e salvo com sucesso!"))
+
+        print('Gravação finalizada')
+
+    
+    def parar_gravacao(self):
+
+        self.gravador.change_status(False)
+
+        self.thread_manager.waitForDone()
+    
+    
     def __init__(self, input_device):
+
+        self.file = arquivo()
+
+
+        self.gravador = Player()
+
+        #gerenciador de threads
+        self.thread_manager = QThreadPool()
+
         super().__init__()
 
 
@@ -60,7 +153,9 @@ class signalWindow(QWidget):
         plt.ylabel("Amplitude")
 
         botaoGravar = QPushButton("Gravar")
+        botaoGravar.clicked.connect(self.rodar_gravador)
         botaoParar = QPushButton("Parar")
+        botaoParar.clicked.connect(self.parar_gravacao)
 
         layout.addWidget(botaoGravar)
         layout.addWidget(botaoParar)
