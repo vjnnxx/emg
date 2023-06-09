@@ -40,7 +40,7 @@ class deviceWindow(QWidget):
 
         create_config(conn, data)
 
-        salvoDialog()
+        salvoDialog("Dispositivo selecionado com sucesso!")
 
         print('Dispositivo escolhido: ' + str(self.selected))
 
@@ -49,6 +49,8 @@ class deviceWindow(QWidget):
             
     def __init__(self, devices, config):
         super().__init__()
+
+        self.setWindowTitle("Selecionar dispositivo")
 
         self.devices = devices
         self.config = config

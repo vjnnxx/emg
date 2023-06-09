@@ -63,7 +63,7 @@ def create_config(conn, config):
 
     return cursor.lastrowid
 
-def selec_config_by_name(conn):
+def select_config_by_name(conn):
     sql = "SELECT * FROM configs WHERE name= 'input_device'"
 
     cursor = conn.cursor()
@@ -78,29 +78,33 @@ def selec_config_by_name(conn):
 
 def create_tables(conn):
 
-    cursor = con.cursor()
+    cursor = conn.cursor()
 
     try:
-        sql = "CREATE TABLE configs (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, name VARCHAR(30), config VARCHAR(100));"
+        sql = "CREATE TABLE IF NOT EXISTS configs (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, name VARCHAR(30), config VARCHAR(100));"
         cursor.execute(sql)
-        print("Tabela config criada com sucesso!")
-    except Exception:
-        print(Exception)
+
+        print("Tabela configs criada com sucesso!")
+    except Exception as e:
+        print(e)
 
     try:
-        sql = "CREATE TABLE wav_data (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT , nome VARCHAR(30) NOT NULL, data DATE,duracao INTEGER NOT NULL, image_path VARCHAR(50), audio_path VARCHAR(50), audio_buffer BLOB);"
+        sql = "CREATE TABLE IF NOT EXISTS wav_data (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT , nome VARCHAR(30) NOT NULL, data DATE,duracao INTEGER NOT NULL, image_path VARCHAR(50), audio_path VARCHAR(50), audio_buffer BLOB);"
         cursor.execute(sql)
         print("Tabela wave_data criada com sucesso!")
-    except Exception:
-        print(Exception)
-
-con = get_conn()
-
-config = ('input_device', '{"id": 1}')
-
-create_config(con, config)
+    except Exception as e:
+        print(e)
 
 
+def table_exists(conn):
+
+    cursor = conn.cursor()
+
+    sql = "SELECT EXISTS (SELECT name FROM sqlite_schema WHERE type='table' AND name='wav_data');"
+
+    x = cursor.execute(sql).fetchone()
+
+    return x 
 
 
 

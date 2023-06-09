@@ -28,8 +28,10 @@ class listWindow(QWidget):
         conn = get_conn()
 
         analises = select_all_wav_data(conn)
+
+        #print(analises)
         
-        print(analises[1][2])
+        #print(analises[1][2])
 
         
         linhas = len(analises)
@@ -52,8 +54,6 @@ class listWindow(QWidget):
         #self.tabela.setEditTriggers(PySide6.QtWidgets.QAbstractItemView.EditTrigger)
 
         layout.addWidget(self.tabela)
-
-        print(len(analises))
         
 
         self.setLayout(layout)
