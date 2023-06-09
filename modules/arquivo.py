@@ -26,15 +26,12 @@ class arquivo:
         self.path = path #arquivo externo
         self.sampleRate = sampleRate
         self.audioBuffer = audioBuffer
-        self.audiofile_path = ''
         self.imagefile_path = ''
         self.duracao_audio = ''
         self.tempo = ''
         self.nome_arquivo = ''
 
 
-    def set_audiofile_path(self, path):
-        self.audiofile_path = path
     
     def set_imagefile_path(self, path):
         self.imagefile_path = path
@@ -83,7 +80,7 @@ class arquivo:
     #Função para tratar os dados e salvar a figura
     def salvar_figura(self):
 
-        if(self.audioBuffer == '' or self.tempo == ''):
+        if(self.audioBuffer.size ==0 or self.tempo == ''):
             return 'Dados faltantes!'
         
 
@@ -108,9 +105,11 @@ class arquivo:
         my_file = name[0] + '.png'
 
 
-        final_image_path = posixpath.join(my_path,my_file)
+        self.set_imagefile_path(posixpath.join(my_path,my_file))
+
+    
             
-        plt.savefig(final_image_path)
+        plt.savefig(self.imagefile_path)
         
         plt.close()
 
@@ -123,7 +122,12 @@ class arquivo:
        
         buffer_tratado = json.dumps(self.audioBuffer, cls=NumpyEncoder)
 
-        data = (my_file, data_atual, self.duracao_audio, final_image_path, '', buffer_tratado)
+        caminho_audio = ''
+
+        if self.path != '':
+            caminho_audio = self.path
+
+        data = (my_file, data_atual, self.duracao_audio, self.imagefile_path, caminho_audio, buffer_tratado)
         
         conn = get_conn()
 

@@ -1,7 +1,7 @@
 import time
 
 
-from PySide6.QtCore import Qt
+from PySide6.QtCore import (Qt, QTimer, QDateTime)
 from PySide6.QtWidgets import (QWidget, QVBoxLayout, QLabel, QPushButton)
 
 from modules.dialogo import salvoDialog
@@ -13,12 +13,11 @@ import matplotlib.pyplot as plt
 #Janela de gráfico dos arquivos externos
 class figureWindow(QWidget):
 
-
             
     def __init__(self, caminho):
         super().__init__()
-
-        self.file = arquivo()
+        
+ 
 
         self.file.tratar_wav(caminho)
 
@@ -57,7 +56,7 @@ class figureWindow(QWidget):
         self.file.salvar_figura()
 
 
-        salvoDialog("Figura salva com sucesso!")
+        salvoDialog("Figura salva com sucesso!", "")
 
         plt.close('all')
 

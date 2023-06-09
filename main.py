@@ -71,7 +71,9 @@ class MainWindow(QMainWindow):
 
         device = json.loads(input_settings[2])
 
-        self.signal = signalWindow(device['id'])
+        print(device)
+
+        self.signal = signalWindow(device["id"])
 
         
         self.signal.show()

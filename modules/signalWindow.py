@@ -9,8 +9,8 @@ import matplotlib.pyplot as plt
 from modules.arquivo import arquivo
 from modules.dialogo import salvoDialog
 
-from PySide6.QtCore import (QThreadPool)
-from PySide6.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QWidget, QPushButton
+from PySide6.QtCore import (QThreadPool, QTimer)
+from PySide6.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QWidget, QPushButton, QLabel
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
 
 class Player:
@@ -30,12 +30,16 @@ class signalWindow(QWidget):
     
     #Roda a função iniciar_gravacao em uma thread diferente
     def rodar_gravador(self):
+        self.startTimer()
+        self.botaoGravar.setEnabled(False)
+        self.botaoParar.setEnabled(True)
         self.thread_manager.start(self.iniciar_gravacao)
 
 
     def iniciar_gravacao(self):
         
         self.gravador.change_status(True)
+
 
         audio = pyaudio.PyAudio()
 
@@ -63,7 +67,9 @@ class signalWindow(QWidget):
         lst = os.listdir('./audio') 
         number_files = len(lst)
 
-        novo_arquivo = './audio/audio' + str(number_files) + '.wav' 
+        self.nome_arquivo_final = f"audio{number_files:02}"
+
+        novo_arquivo = f"./audio/{self.nome_arquivo_final}.wav" 
 
         sound_file = wave.open(novo_arquivo, 'wb')
         sound_file.setnchannels(1)
@@ -76,23 +82,65 @@ class signalWindow(QWidget):
 
         self.file.salvar_figura()
 
-        nome_str = 'audio' + str(number_files)
-
-        #self.thread_manager.start(salvoDialog(nome_str + "Áudio gravado e salvo com sucesso!"))
+        
+        print(self.nome_arquivo_final)
 
         print('Gravação finalizada')
 
     
     def parar_gravacao(self):
 
+        self.endTimer()
+
         self.gravador.change_status(False)
 
-        self.thread_manager.waitForDone()
+        self.botaoGravar.setEnabled(True)
+        self.botaoParar.setEnabled(False)
+
+        salvoDialog('Gravação salva com sucesso!')
+
+
+
+    '''Funções do cronometro'''
+    def startTimer(self):
+        self.timer.start()
+
+    def endTimer(self):
+        self.timer.stop()
+
+        self.seconds = 0
+        self.minutes = 0 
+
+        self.timerlabel.setText("00:00")
+
+    
+    def contador(self):
+
+        #Incrementa os minutos e zera os segundo
+        if self.seconds >= 59:
+            self.minutes += 1
+            self.seconds = 0
+            self.timerlabel.setText(f"{self.minutes:02}:{self.seconds:02}")
+        else:
+            self.seconds += 1
+            self.timerlabel.setText(f"{self.minutes:02}:{self.seconds:02}")
+
+    
     
     
     def __init__(self, input_device):
 
         self.file = arquivo()
+
+        self.seconds = 0
+        self.minutes = 0
+
+        self.timer=QTimer()
+        self.timer.setInterval(1000)
+        self.timer.timeout.connect(self.contador)
+
+
+        self.nome_arquivo_final = ''    
 
 
         self.gravador = Player()
@@ -152,13 +200,19 @@ class signalWindow(QWidget):
         plt.xlabel("Tempo")
         plt.ylabel("Amplitude")
 
-        botaoGravar = QPushButton("Gravar")
-        botaoGravar.clicked.connect(self.rodar_gravador)
-        botaoParar = QPushButton("Parar")
-        botaoParar.clicked.connect(self.parar_gravacao)
+        self.botaoGravar = QPushButton("Gravar")
+        self.botaoGravar.clicked.connect(self.rodar_gravador)
+        self.botaoParar = QPushButton("Parar")
+        self.botaoParar.clicked.connect(self.parar_gravacao)
 
-        layout.addWidget(botaoGravar)
-        layout.addWidget(botaoParar)
+        self.botaoGravar.setEnabled(True)
+        self.botaoParar.setEnabled(False)
+
+        self.timerlabel = QLabel('00:00')
+
+        layout.addWidget(self.timerlabel)
+        layout.addWidget(self.botaoGravar)
+        layout.addWidget(self.botaoParar)
 
 
         self.setLayout(layout)

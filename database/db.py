@@ -96,6 +96,10 @@ def create_tables(conn):
 
 con = get_conn()
 
+config = ('input_device', '{"id": 1}')
+
+create_config(con, config)
+
 
 
 
