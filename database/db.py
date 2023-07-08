@@ -19,6 +19,19 @@ def select_all_wav_data(conn):
     
     return rows
 
+
+def select_buffer_wav_data(conn, id):
+
+    cursor = conn.cursor()
+
+    sql = 'SELECT audio_buffer FROM wav_data WHERE id = ?'
+
+    id = str(id)
+
+    row = cursor.execute(sql, id).fetchone()
+
+    return row
+
 def desc_wav_data(conn):
     cursor = conn.cursor()
 
@@ -105,6 +118,46 @@ def table_exists(conn):
     x = cursor.execute(sql).fetchone()
 
     return x 
+
+'''Testando algumas paradas'''
+import numpy as np
+import json
+
+conn = get_conn()
+
+buffer = select_buffer_wav_data(conn, 1)
+
+
+
+buffer = json.loads(buffer[0])
+
+buffer = np.array(buffer)
+
+buffer = buffer/10000
+
+
+tamanho = np.size(buffer)
+
+buffer_quadrado = buffer ** 2
+
+soma = np.sum(buffer_quadrado)
+
+
+media = soma/tamanho
+
+raiz_quadrada_media = np.sqrt(media)
+
+print(raiz_quadrada_media)
+
+tempo = np.linspace(1, 100, 100)
+
+print(tempo)
+
+
+
+
+#buffer_quadrado = buffer ** 2
+
 
 
 

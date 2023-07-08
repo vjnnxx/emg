@@ -66,8 +66,8 @@ class MainWindow(QMainWindow):
 
 
 
-    def abrir_janela_arquivo(self, file):
-        self.janela_arquivo = figureWindow(file)
+    def abrir_janela_arquivo(self, caminho):
+        self.janela_arquivo = figureWindow(caminho)
 
 
         self.janela_arquivo.show()
@@ -87,17 +87,6 @@ class MainWindow(QMainWindow):
         self.janela_analises = listWindow()
         self.janela_analises.show()
         
-
-
-    def gravar_sinal(self):
-        print('Gravar sinal')
-
-
-    def rodar_grafico(self, layout):
-        print('rodando')
-        #self.threadpool.start(worker)
-
-
 
     def selecionar_dispositivo(self, devices):
         #Fazer select com nomes de dispositivos de entrada em um dialog
