@@ -19,6 +19,19 @@ def select_all_wav_data(conn):
     
     return rows
 
+
+def select_buffer_wav_data(conn, id):
+
+    cursor = conn.cursor()
+
+    sql = 'SELECT audio_buffer FROM wav_data WHERE id = ?'
+
+    id = str(id)
+
+    row = cursor.execute(sql, id).fetchone()
+
+    return row
+
 def desc_wav_data(conn):
     cursor = conn.cursor()
 
@@ -63,7 +76,7 @@ def create_config(conn, config):
 
     return cursor.lastrowid
 
-def selec_config_by_name(conn):
+def select_config_by_name(conn):
     sql = "SELECT * FROM configs WHERE name= 'input_device'"
 
     cursor = conn.cursor()
@@ -78,28 +91,72 @@ def selec_config_by_name(conn):
 
 def create_tables(conn):
 
-    cursor = con.cursor()
+    cursor = conn.cursor()
 
     try:
-        sql = "CREATE TABLE configs (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, name VARCHAR(30), config VARCHAR(100));"
+        sql = "CREATE TABLE IF NOT EXISTS configs (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, name VARCHAR(30), config VARCHAR(100));"
         cursor.execute(sql)
-        print("Tabela config criada com sucesso!")
-    except Exception:
-        print(Exception)
+
+        print("Tabela configs criada com sucesso!")
+    except Exception as e:
+        print(e)
 
     try:
-        sql = "CREATE TABLE wav_data (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT , nome VARCHAR(30) NOT NULL, data DATE,duracao INTEGER NOT NULL, image_path VARCHAR(50), audio_path VARCHAR(50), audio_buffer BLOB);"
+        sql = "CREATE TABLE IF NOT EXISTS wav_data (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT , nome VARCHAR(30) NOT NULL, data DATE,duracao INTEGER NOT NULL, image_path VARCHAR(50), audio_path VARCHAR(50), audio_buffer BLOB);"
         cursor.execute(sql)
         print("Tabela wave_data criada com sucesso!")
-    except Exception:
-        print(Exception)
+    except Exception as e:
+        print(e)
 
-con = get_conn()
 
-config = ('input_device', '{"id": 1}')
+def table_exists(conn):
 
-create_config(con, config)
+    cursor = conn.cursor()
 
+    sql = "SELECT EXISTS (SELECT name FROM sqlite_schema WHERE type='table' AND name='wav_data');"
+
+    x = cursor.execute(sql).fetchone()
+
+    return x 
+
+'''Testando algumas paradas'''
+import numpy as np
+import json
+
+conn = get_conn()
+
+buffer = select_buffer_wav_data(conn, 1)
+
+
+
+buffer = json.loads(buffer[0])
+
+buffer = np.array(buffer)
+
+buffer = buffer/10000
+
+
+tamanho = np.size(buffer)
+
+buffer_quadrado = buffer ** 2
+
+soma = np.sum(buffer_quadrado)
+
+
+media = soma/tamanho
+
+raiz_quadrada_media = np.sqrt(media)
+
+print(raiz_quadrada_media)
+
+tempo = np.linspace(1, 100, 100)
+
+print(tempo)
+
+
+
+
+#buffer_quadrado = buffer ** 2
 
 
 

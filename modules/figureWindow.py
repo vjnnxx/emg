@@ -17,7 +17,9 @@ class figureWindow(QWidget):
     def __init__(self, caminho):
         super().__init__()
         
- 
+        self.file = arquivo()
+
+        self.setWindowTitle("Gráfico de arquivo externo")
 
         self.file.tratar_wav(caminho)
 
@@ -56,7 +58,7 @@ class figureWindow(QWidget):
         self.file.salvar_figura()
 
 
-        salvoDialog("Figura salva com sucesso!", "")
+        salvoDialog("Figura salva com sucesso!")
 
         plt.close('all')
 
@@ -64,5 +66,4 @@ class figureWindow(QWidget):
 
         
 
-        #self.deleteLater()
 

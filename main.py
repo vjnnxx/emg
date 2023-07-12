@@ -1,4 +1,6 @@
 import sys
+
+import os
 import json
 from qdarktheme import load_stylesheet
 from PySide6.QtCore import (Qt)
@@ -12,11 +14,12 @@ from modules.arquivo import arquivo
 
 from modules.signalWindow import signalWindow
 from modules.figureWindow import figureWindow
-from modules.device_window import deviceWindow
+from modules.deviceWindow import deviceWindow
 from modules.listWindow import listWindow
 from modules.config import config
 
-from database.db import (selec_config_by_name, get_conn)
+from database.start_db import start
+from database.db import (select_config_by_name, get_conn,create_tables, table_exists)
 
 import numpy as np
 
@@ -27,9 +30,13 @@ config = config()
 
 conn = get_conn()
 
+#Verifica e cria as tabelas caso ainda não existam no banco
+table_check = table_exists(conn)
+table_check = table_check[0]
 
-def printar():
-    print('Botão foi clicado!')
+if table_check == 0:
+    start() 
+
 
 
 #Janela principal do app
@@ -59,19 +66,17 @@ class MainWindow(QMainWindow):
 
 
 
-    def abrir_janela_arquivo(self, file):
-        self.janela_arquivo = figureWindow(file)
+    def abrir_janela_arquivo(self, caminho):
+        self.janela_arquivo = figureWindow(caminho)
 
 
         self.janela_arquivo.show()
 
     def abrir_janela_sinal(self):
 
-        input_settings = selec_config_by_name(conn)
+        input_settings = select_config_by_name(conn)
 
         device = json.loads(input_settings[2])
-
-        print(device)
 
         self.signal = signalWindow(device["id"])
 
@@ -83,28 +88,14 @@ class MainWindow(QMainWindow):
         self.janela_analises.show()
         
 
-
-    def gravar_sinal(self):
-        print('Gravar sinal')
-
-
-    def rodar_grafico(self, layout):
-        print('rodando')
-        #self.threadpool.start(worker)
-
-
-
     def selecionar_dispositivo(self, devices):
         #Fazer select com nomes de dispositivos de entrada em um dialog
 
         self.device_window = deviceWindow(devices, config)
-        self.device_window.setWindowTitle("Selecionar dispositivo")
         self.device_window.setGeometry(200, 200, 400, 300)
 
         self.device_window.show()
         
-
-        #print(devices)
 
 
 
@@ -119,8 +110,7 @@ class MainWindow(QMainWindow):
 
         #Criando barra de menu
         
-        action = QAction('Ação', self)
-        action.triggered.connect(printar)
+
         menu = self.menuBar()
 
 
