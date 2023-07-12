@@ -19,6 +19,18 @@ def select_all_wav_data(conn):
     
     return rows
 
+def select_wav_data(conn, id):
+
+    cursor = conn.cursor()
+
+    sql = 'SELECT nome, duracao, image_path, audio_path FROM wav_data WHERE id = ?'
+
+    id = str(id)
+
+    row = cursor.execute(sql, id).fetchone()
+
+    return row
+
 
 def select_buffer_wav_data(conn, id):
 

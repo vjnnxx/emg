@@ -6,11 +6,8 @@ from qdarktheme import load_stylesheet
 from PySide6.QtCore import (Qt)
 from PySide6 import QtCore
 from PySide6.QtGui import QFont, QAction
-from PySide6.QtWidgets import ( 
-    QApplication, QLabel, QPushButton, QWidget, QVBoxLayout, QMainWindow, QFileDialog, QLineEdit, QDialog, QDialogButtonBox)
+from PySide6.QtWidgets import ( QApplication, QLabel, QPushButton, QWidget, QVBoxLayout, QMainWindow, QFileDialog, QTabWidget, QStackedWidget)
 
-
-from modules.arquivo import arquivo
 
 from modules.signalWindow import signalWindow
 from modules.figureWindow import figureWindow
@@ -21,9 +18,6 @@ from modules.config import config
 from database.start_db import start
 from database.db import (select_config_by_name, get_conn,create_tables, table_exists)
 
-import numpy as np
-
-import queue
 import sounddevice as sd
 
 config = config()
@@ -36,7 +30,6 @@ table_check = table_check[0]
 
 if table_check == 0:
     start() 
-
 
 
 #Janela principal do app
@@ -84,8 +77,10 @@ class MainWindow(QMainWindow):
         self.signal.show()
 
     def abrir_janela_analises(self):
-        self.janela_analises = listWindow()
-        self.janela_analises.show()
+        janela_analises = listWindow()
+        stack.addWidget(janela_analises)
+        stack.setCurrentIndex(stack.currentIndex()+1)
+        #self.janela_analises.show()
         
 
     def selecionar_dispositivo(self, devices):
@@ -95,9 +90,6 @@ class MainWindow(QMainWindow):
         self.device_window.setGeometry(200, 200, 400, 300)
 
         self.device_window.show()
-        
-
-
 
     def __init__(self):
         super().__init__()
@@ -106,7 +98,6 @@ class MainWindow(QMainWindow):
 
         base = QWidget()
         layout = QVBoxLayout()
-
 
         #Criando barra de menu
         
@@ -181,8 +172,14 @@ class MainWindow(QMainWindow):
 app = QApplication(sys.argv)
 app.setStyleSheet(load_stylesheet())
 
+
 janela = MainWindow()
-janela.show()
+
+stack = QStackedWidget()
+
+stack.addWidget(janela)
+
+stack.show()
 
 sys.exit(app.exec())
 
