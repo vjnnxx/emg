@@ -1,11 +1,9 @@
 import time
 
-from scipy.signal import find_peaks
-
 from PySide6.QtCore import (Qt, QTimer, QDateTime)
 from PySide6.QtWidgets import (QWidget, QVBoxLayout, QLabel, QPushButton)
 
-from modules.dialogo import salvoDialog
+from modules.findPeakWindow import findPeakWindow
 from modules.arquivo import arquivo
 from database.db import *
 
@@ -14,7 +12,11 @@ import matplotlib.pyplot as plt
 
 #Janela de gráfico dos arquivos externos
 class analysisWindow(QWidget):
-
+    
+    def encontrar_picos(self, buffer):
+        self.peakWindow = findPeakWindow(buffer)
+        
+        self.peakWindow.show()
             
     def __init__(self, id):
         super().__init__()
@@ -27,6 +29,7 @@ class analysisWindow(QWidget):
         conn = get_conn()
 
         registro = select_wav_data(conn, id)
+
 
         caminho = registro[3]
 
@@ -75,26 +78,21 @@ class analysisWindow(QWidget):
         canva.ax.set_xlabel('Tempo [s]')
         canva.ax.set_ylabel('Amplitude [Hz]')
 
-        #canva.ax.plot(self.file.tempo, self.file.audioBuffer/10000)
-
-
-        
-
-        ''' Achar picos'''
-        picos, _ = find_peaks(buffer_quadrado, 0.3)
-
-        canva.ax.plot(buffer_quadrado)
-        
-        canva.ax.plot(picos, buffer_quadrado[picos], "x")
-
+        canva.ax.plot(self.file.tempo, self.file.audioBuffer/10000)
 
         layout.addWidget(canva)
 
         botaoRMS = QPushButton('Calcular RMS')
+
+
         botaoPeaks = QPushButton('Achar Picos')
+        botaoPeaks.clicked.connect(lambda: self.encontrar_picos(buffer_quadrado))
 
         layout.addWidget(botaoRMS)
         layout.addWidget(botaoPeaks)
+        
+
+        
       
 
 

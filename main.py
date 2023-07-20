@@ -77,14 +77,16 @@ class MainWindow(QMainWindow):
         self.signal.show()
 
     def abrir_janela_analises(self):
-        janela_analises = listWindow()
-        stack.addWidget(janela_analises)
-        stack.setCurrentIndex(stack.currentIndex()+1)
-        #self.janela_analises.show()
+        self.janela_analises = listWindow()
+
+        self.janela_analises.setGeometry(1000, 50, 500, 500)
+        #stack.addWidget(janela_analises)
+        #stack.setCurrentIndex(stack.currentIndex()+1)
+        self.janela_analises.show()
         
 
     def selecionar_dispositivo(self, devices):
-        #Fazer select com nomes de dispositivos de entrada em um dialog
+       
 
         self.device_window = deviceWindow(devices, config)
         self.device_window.setGeometry(200, 200, 400, 300)
@@ -175,11 +177,13 @@ app.setStyleSheet(load_stylesheet())
 
 janela = MainWindow()
 
-stack = QStackedWidget()
+#stack = QStackedWidget()
 
-stack.addWidget(janela)
+#stack.addWidget(janela)
 
-stack.show()
+#stack.show()
+
+janela.show()
 
 sys.exit(app.exec())
 

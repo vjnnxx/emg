@@ -42,7 +42,7 @@ class listWindow(QWidget):
         layout = QVBoxLayout()
 
         self.setWindowTitle("Arquivos Salvos")
-        self.resize(750, 500)
+        self.resize(900, 500)
 
         self.label = QLabel("Lista de análises")
         self.label.setAlignment(Qt.AlignCenter)
