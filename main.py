@@ -16,11 +16,10 @@ from modules.listWindow import listWindow
 from modules.config import config
 
 from database.start_db import start
-from database.db import (select_config_by_name, get_conn,create_tables, table_exists)
+from database.db import (select_config_input_device, get_conn,create_tables, table_exists)
 
 import sounddevice as sd
 
-config = config()
 
 conn = get_conn()
 
@@ -67,7 +66,7 @@ class MainWindow(QMainWindow):
 
     def abrir_janela_sinal(self):
 
-        input_settings = select_config_by_name(conn)
+        input_settings = select_config_input_device(conn)
 
         device = json.loads(input_settings[2])
 
@@ -88,7 +87,7 @@ class MainWindow(QMainWindow):
     def selecionar_dispositivo(self, devices):
        
 
-        self.device_window = deviceWindow(devices, config)
+        self.device_window = deviceWindow(devices)
         self.device_window.setGeometry(200, 200, 400, 300)
 
         self.device_window.show()
@@ -176,12 +175,6 @@ app.setStyleSheet(load_stylesheet())
 
 
 janela = MainWindow()
-
-#stack = QStackedWidget()
-
-#stack.addWidget(janela)
-
-#stack.show()
 
 janela.show()
 

@@ -88,7 +88,7 @@ def create_config(conn, config):
 
     return cursor.lastrowid
 
-def select_config_by_name(conn):
+def select_config_input_device(conn):
     sql = "SELECT * FROM configs WHERE name= 'input_device'"
 
     cursor = conn.cursor()
@@ -131,11 +131,40 @@ def table_exists(conn):
 
     return x 
 
-'''Testando algumas paradas'''
-import numpy as np
+#Configurações padrão do sistema
 import json
 
 conn = get_conn()
+
+
+create_tables(conn)
+
+
+
+#Criando configurações de entrada padrão
+
+config_exists = select_config_input_device(conn)
+
+if config_exists == None:
+    print('Tabela ta vazia mané')
+    config = {'id': 0}
+
+    
+    config = json.dumps(config)
+
+    data = ('input_device', config)
+
+    create_config(conn, data)
+    
+
+
+
+
+'''Testando algumas paradas'''
+'''
+import numpy as np
+
+
 
 buffer = select_buffer_wav_data(conn, 1)
 
@@ -169,7 +198,7 @@ print(tempo)
 
 
 #buffer_quadrado = buffer ** 2
-
+'''
 
 
 
