@@ -22,7 +22,6 @@ class deviceWindow(QWidget):
         for x in range(len(self.devices)):
             if self.devices[x]['nome_dispositivo'] == index:
                 dispositivo_selecionado = self.devices[x]['id']
-                self.config.set_device = self.devices[x]['id']
                 break
         
         self.selected = dispositivo_selecionado
@@ -47,13 +46,13 @@ class deviceWindow(QWidget):
         self.close()
 
             
-    def __init__(self, devices, config):
+    def __init__(self, devices):
         super().__init__()
 
         self.setWindowTitle("Selecionar dispositivo")
 
         self.devices = devices
-        self.config = config
+        
         self.selected = None
 
         layout = QVBoxLayout()
@@ -77,13 +76,13 @@ class deviceWindow(QWidget):
 
 
         #fechar janela
-        botaoAnalise = QPushButton('Selecionar')
-        botaoAnalise.clicked.connect(self.selecionar_dispositivo)
+        botao = QPushButton('Selecionar')
+        botao.clicked.connect(self.selecionar_dispositivo)
         
 
       
 
-        layout.addWidget(botaoAnalise)
+        layout.addWidget(botao)
 
 
         self.setLayout(layout)

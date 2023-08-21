@@ -6,11 +6,8 @@ from qdarktheme import load_stylesheet
 from PySide6.QtCore import (Qt)
 from PySide6 import QtCore
 from PySide6.QtGui import QFont, QAction
-from PySide6.QtWidgets import ( 
-    QApplication, QLabel, QPushButton, QWidget, QVBoxLayout, QMainWindow, QFileDialog, QLineEdit, QDialog, QDialogButtonBox)
+from PySide6.QtWidgets import ( QApplication, QLabel, QPushButton, QWidget, QVBoxLayout, QMainWindow, QFileDialog, QTabWidget, QStackedWidget)
 
-
-from modules.arquivo import arquivo
 
 from modules.signalWindow import signalWindow
 from modules.figureWindow import figureWindow
@@ -19,14 +16,10 @@ from modules.listWindow import listWindow
 from modules.config import config
 
 from database.start_db import start
-from database.db import (select_config_by_name, get_conn,create_tables, table_exists)
+from database.db import (select_config_input_device, get_conn,create_tables, table_exists)
 
-import numpy as np
-
-import queue
 import sounddevice as sd
 
-config = config()
 
 conn = get_conn()
 
@@ -36,7 +29,6 @@ table_check = table_check[0]
 
 if table_check == 0:
     start() 
-
 
 
 #Janela principal do app
@@ -74,7 +66,7 @@ class MainWindow(QMainWindow):
 
     def abrir_janela_sinal(self):
 
-        input_settings = select_config_by_name(conn)
+        input_settings = select_config_input_device(conn)
 
         device = json.loads(input_settings[2])
 
@@ -85,19 +77,20 @@ class MainWindow(QMainWindow):
 
     def abrir_janela_analises(self):
         self.janela_analises = listWindow()
+
+        self.janela_analises.setGeometry(1000, 50, 500, 500)
+        #stack.addWidget(janela_analises)
+        #stack.setCurrentIndex(stack.currentIndex()+1)
         self.janela_analises.show()
         
 
     def selecionar_dispositivo(self, devices):
-        #Fazer select com nomes de dispositivos de entrada em um dialog
+       
 
-        self.device_window = deviceWindow(devices, config)
+        self.device_window = deviceWindow(devices)
         self.device_window.setGeometry(200, 200, 400, 300)
 
         self.device_window.show()
-        
-
-
 
     def __init__(self):
         super().__init__()
@@ -106,7 +99,6 @@ class MainWindow(QMainWindow):
 
         base = QWidget()
         layout = QVBoxLayout()
-
 
         #Criando barra de menu
         
@@ -181,7 +173,9 @@ class MainWindow(QMainWindow):
 app = QApplication(sys.argv)
 app.setStyleSheet(load_stylesheet())
 
+
 janela = MainWindow()
+
 janela.show()
 
 sys.exit(app.exec())

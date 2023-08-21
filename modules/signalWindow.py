@@ -159,10 +159,19 @@ class signalWindow(QWidget):
         # Cria um FigureCanvas e adiciona ao layout
         
         
-        self.figure = plt.figure()
+        
+        self.figure = plt.figure(facecolor='#000000')
+
+        ax = plt.axes()
+
+        ax.set_facecolor("black")
+        
         
         
         self.canvas = FigureCanvas(self.figure)
+
+        
+    
         layout.addWidget(self.canvas)
 
         # Variáveis do gráfico
@@ -219,11 +228,15 @@ class signalWindow(QWidget):
 
         self.setFixedSize(self.size())
 
+        self.update_limit = 2
+
 
         
 
     def update_plot(self, indata):
         # Atualiza os dados do gráfico
+
+        '''
         self.y_data[:-1] = self.y_data[1:]  # Desloca os valores existentes para a esquerda
         self.y_data[-1] = indata  # Adiciona o novo valor no final
 
@@ -232,6 +245,20 @@ class signalWindow(QWidget):
 
         # Atualiza o canvas
         self.canvas.draw()
+        '''
+
+        # Incrementa o contador de atualização
+        self.update_counter += 1
+        
+        # Verifica se é necessário atualizar o gráfico
+        if self.update_counter >= self.update_limit:
+            self.y_data[:-1] = self.y_data[1:]
+            self.y_data[-1] = indata
+            self.line.set_ydata(self.y_data)
+            self.canvas.draw()
+
+            self.update_counter = 0
+        
 
 
     # Função de callback para atualizar o gráfico do FigureCanvas
