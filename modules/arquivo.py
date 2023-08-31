@@ -127,7 +127,7 @@ class arquivo:
         if self.path != '':
             caminho_audio = self.path
 
-        data = (my_file, data_atual, self.duracao_audio, self.imagefile_path, caminho_audio, buffer_tratado)
+        data = (my_file, data_atual, self.duracao_audio, self.imagefile_path, caminho_audio, buffer_tratado, self.sampleRate)
         
         conn = get_conn()
 

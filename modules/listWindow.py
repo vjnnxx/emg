@@ -94,9 +94,8 @@ class listWindow(QWidget):
 
             callback = self.create_callback(ids[x])
 
-            btn.clicked.connect(callback)###resolver
+            btn.clicked.connect(callback)
             btn.setText("Abrir")
-            #buttons.append(btn)
 
             
             self.tabela.setCellWidget(x, 6, btn)

@@ -23,7 +23,7 @@ def select_wav_data(conn, id):
 
     cursor = conn.cursor()
 
-    sql = 'SELECT nome, duracao, image_path, audio_path FROM wav_data WHERE id = ?'
+    sql = 'SELECT nome, duracao, image_path, audio_path, sample_rate FROM wav_data WHERE id = ?'
 
     id = str(id)
 
@@ -54,11 +54,25 @@ def desc_wav_data(conn):
         print(row)
 
 def create_wav_data(conn, wav_data):
-    sql = "INSERT INTO wav_data(nome, data, duracao,image_path,audio_path, audio_buffer) VALUES (?, ?, ?, ?, ? ,?);"
+    sql = "INSERT INTO wav_data(nome, data, duracao,image_path,audio_path, audio_buffer, sample_rate) VALUES (?, ?, ?, ?, ? ,?, ?);"
 
     cursor = conn.cursor()
 
     cursor.execute(sql, wav_data)
+
+    conn.commit()
+
+    return cursor.lastrowid
+
+def delete_wav_data(conn, id):
+
+    sql = "DELETE FROM wav_data WHERE id = ?"
+
+    cursor = conn.cursor()
+
+    id = str(id)
+
+    cursor.execute(sql, id)
 
     conn.commit()
 
@@ -114,7 +128,7 @@ def create_tables(conn):
         print(e)
 
     try:
-        sql = "CREATE TABLE IF NOT EXISTS wav_data (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT , nome VARCHAR(30) NOT NULL, data DATE,duracao INTEGER NOT NULL, image_path VARCHAR(50), audio_path VARCHAR(50), audio_buffer BLOB);"
+        sql = "CREATE TABLE IF NOT EXISTS wav_data (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT , nome VARCHAR(30) NOT NULL, data DATE,duracao INTEGER NOT NULL, image_path VARCHAR(50), audio_path VARCHAR(50), audio_buffer BLOB, sample_rate INTEGER NOT NULL);"
         cursor.execute(sql)
         print("Tabela wave_data criada com sucesso!")
     except Exception as e:

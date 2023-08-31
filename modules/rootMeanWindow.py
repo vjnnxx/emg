@@ -9,7 +9,7 @@ from modules.canvas import Canvas
 import matplotlib.pyplot as plt
 
 #Janela de gráfico dos arquivos externos
-class findPeakWindow(QWidget):
+class rootMeanWindow(QWidget):
 
     def atualizar_valor(self, text):
         
@@ -43,67 +43,32 @@ class findPeakWindow(QWidget):
         self.buffer = buffer_quadrado
 
         self.tempo = tempo
-        
 
-        self.threshold = 1
-       
-
-        self.setWindowTitle("Encontrar picos")
+        self.setWindowTitle("RMS")
 
        
         layout_horizontal = QHBoxLayout()   
 
         layout_canva = QVBoxLayout()
 
-        self.label = QLabel("Encontrar picos")
-        self.label.setAlignment(Qt.AlignCenter)
+        self.label = QLabel("RMS")
+
         layout_canva.addWidget(self.label)
 
-
-        ''' Achar picos'''
-
-        self.canva = Canvas()
-        
-        picos, _ = find_peaks(self.buffer, self.threshold)
-
-        self.canva.ax.plot(self.tempo, self.buffer)
-        
-        self.canva.ax.plot(picos, self.buffer[picos], "x")
+        layout_canva = QVBoxLayout()
 
 
-        layout_canva.addWidget(self.canva)
+        canva = Canvas()
+
+        canva.ax.plot(self.tempo, self.buffer)
+
+        layout_canva.addWidget(canva)
 
         layout_horizontal.addLayout(layout_canva)
 
-
-        layout_inputs = QVBoxLayout()
-
-        self.number_input = QLineEdit() 
-        #self.number_input.setValidator(QDoubleValidator(0.00, 3 ,2))
-        self.number_input.textChanged.connect(self.atualizar_valor)
-        
-
-        botao = QPushButton('Encontrar')
-        botao.clicked.connect(self.atualizar_canva)
-
-        
-
-
-        form_layout = QFormLayout()
-
-        form_layout.addRow("Valor", self.number_input)
-        form_layout.addRow("", botao)
-
-        #layout_inputs.addWidget(number_input)
-
-        #layout_inputs.addWidget(botao)
-
-        layout_horizontal.addLayout(form_layout)
-           
-        
-
         self.setLayout(layout_horizontal)
 
+       
         self.setFixedSize(self.size())
 
 
