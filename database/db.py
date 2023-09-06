@@ -23,11 +23,12 @@ def select_wav_data(conn, id):
 
     cursor = conn.cursor()
 
-    sql = 'SELECT nome, duracao, image_path, audio_path, sample_rate FROM wav_data WHERE id = ?'
+    sql = 'SELECT nome, duracao, image_path, audio_path, sample_rate FROM wav_data WHERE id = ?;'
 
     id = str(id)
 
-    row = cursor.execute(sql, id).fetchone()
+    row = cursor.execute(sql, [id]).fetchone()
+
 
     return row
 
@@ -40,7 +41,7 @@ def select_buffer_wav_data(conn, id):
 
     id = str(id)
 
-    row = cursor.execute(sql, id).fetchone()
+    row = cursor.execute(sql, [id]).fetchone()
 
     return row
 
@@ -72,7 +73,7 @@ def delete_wav_data(conn, id):
 
     id = str(id)
 
-    cursor.execute(sql, id)
+    cursor.execute(sql, [id])
 
     conn.commit()
 

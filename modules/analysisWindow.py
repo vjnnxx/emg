@@ -1,10 +1,12 @@
-import time
+import os
 
 from PySide6.QtCore import (Qt, QTimer, QDateTime)
 from PySide6.QtWidgets import (QWidget, QVBoxLayout, QLabel, QPushButton)
 
 from modules.findPeakWindow import findPeakWindow
 from modules.rootMeanWindow import rootMeanWindow
+from modules.dialogo import customDialog
+from modules.confirmDialog import confirmDialog
 from modules.arquivo import arquivo
 from database.db import *
 
@@ -14,6 +16,9 @@ import matplotlib.pyplot as plt
 
 #Janela de gráfico dos arquivos externos
 class analysisWindow(QWidget):
+
+    def fecharJanela(self):
+        self.close()
     
     def encontrar_picos(self, buffer, tempo):
         self.peakWindow = findPeakWindow(buffer, tempo)
@@ -28,15 +33,53 @@ class analysisWindow(QWidget):
 
     def excluir_registro(self, id):
 
-        conn = get_conn()
+        
+        dialog = confirmDialog()
 
-        try:
-            delete_wav_data(conn=conn, id=id)
-            print("Registro excluído com sucesso!") ##Adicionar alerta para confirmar e etc
-        except Exception as e:
-            print(e)
-        conn.close()
+        if dialog.exec_():
+            #Excluir arquivos relacionados
+
+            conn = get_conn()
+
+            registro = select_wav_data(conn, id)
+
+            caminho_imagem = registro[2]
+            caminho_audio = registro[3]
+
+            print(caminho_imagem)
+
+            print(caminho_audio)
+
+            if os.path.isfile(caminho_imagem):
+                os.remove(caminho_imagem)
+            else:
+                print("Erro, arquivo não encontrado.")
+
+            audio_check = caminho_audio.startswith('./audio')
+
+            #Exclui arquivo de áudio caso tenha sido gravado pelo sistema
+            if audio_check: #transformar em função mais tarde
+                if os.path.isfile(caminho_audio):
+                    os.remove(caminho_audio)
+                else:
+                    print("Erro, arquivo não encontrado.")
             
+            try:
+
+                self.fecharJanela()
+                delete_wav_data(conn=conn, id=id)
+                print("Registro excluído com sucesso!")
+                customDialog("Registro excluído com sucesso!")
+ 
+            except Exception as e:
+                print(e)
+            conn.close()
+            print('Confirmado')
+
+        else:
+            print('Melhor não!')
+
+
     def __init__(self, id):
         super().__init__()
 
@@ -125,6 +168,7 @@ class analysisWindow(QWidget):
         
 
         botaoDelete = QPushButton('Excluir Registro')
+        botaoDelete.setStyleSheet('QPushButton {background-color: #A3C1DA; color: red;}')
         botaoDelete.clicked.connect(lambda: self.excluir_registro(id))
 
         layout.addWidget(botaoRMS)

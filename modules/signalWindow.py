@@ -7,7 +7,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from modules.arquivo import arquivo
-from modules.dialogo import salvoDialog
+from modules.dialogo import customDialog
 
 from PySide6.QtCore import (QThreadPool, QTimer)
 from PySide6.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QWidget, QPushButton, QLabel
@@ -97,7 +97,7 @@ class signalWindow(QWidget):
         self.botaoGravar.setEnabled(True)
         self.botaoParar.setEnabled(False)
 
-        salvoDialog('Gravação salva com sucesso!')
+        customDialog('Gravação salva com sucesso!')
 
 
 
