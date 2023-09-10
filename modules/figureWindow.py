@@ -4,7 +4,7 @@ import time
 from PySide6.QtCore import (Qt, QTimer, QDateTime)
 from PySide6.QtWidgets import (QWidget, QVBoxLayout, QLabel, QPushButton)
 
-from modules.dialogo import salvoDialog
+from modules.dialogo import customDialog
 from modules.arquivo import arquivo
 
 from modules.canvas import Canvas
@@ -58,7 +58,7 @@ class figureWindow(QWidget):
         self.file.salvar_figura()
 
 
-        salvoDialog("Figura salva com sucesso!")
+        customDialog("Figura salva com sucesso!")
 
         plt.close('all')
 

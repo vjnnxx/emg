@@ -4,7 +4,7 @@ import json
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (QWidget, QVBoxLayout, QLabel, QPushButton, QComboBox)
 
-from modules.dialogo import salvoDialog
+from modules.dialogo import customDialog
 
 
 from database.db import (get_conn,create_config)
@@ -39,7 +39,7 @@ class deviceWindow(QWidget):
 
         create_config(conn, data)
 
-        salvoDialog("Dispositivo selecionado com sucesso!")
+        ("Dispositivo selecionado com sucesso!")
 
         print('Dispositivo escolhido: ' + str(self.selected))
 

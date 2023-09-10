@@ -3,15 +3,10 @@ from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (QWidget, QVBoxLayout, QLabel, QPushButton, QTableWidget, QTableWidgetItem, QStyledItemDelegate)
 from PySide6.QtGui import (QFont)
 
-from modules.dialogo import salvoDialog
+from modules.dialogo import customDialog
 from modules.analysisWindow import analysisWindow
 
 from database.db import *
-
-'''from main import MainWindow #PELO AMOR DE DEUS NÃO'''
-
-#contorna o problema funcional de usar lambda pra ativar o sinal clicked
-
 
 #Ativa evento que impede edição da tabela
 class ReadOnlyDelegate(QStyledItemDelegate):
@@ -28,10 +23,8 @@ class listWindow(QWidget):
 
     def create_callback(self, info):
         def button_clicked():
-
             self.janela_analise = analysisWindow(info)
             self.janela_analise.show()
-            print("ID do registro:", info)
         return button_clicked
     
     
