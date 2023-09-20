@@ -1,7 +1,8 @@
 import os
+import shutil
 
-from PySide6.QtCore import (Qt, QTimer, QDateTime)
-from PySide6.QtWidgets import (QWidget, QVBoxLayout, QLabel, QPushButton)
+from PySide6.QtCore import (Qt)
+from PySide6.QtWidgets import (QWidget, QVBoxLayout, QLabel, QPushButton, QFileDialog)
 
 from modules.findPeakWindow import findPeakWindow
 from modules.rootMeanWindow import rootMeanWindow
@@ -30,6 +31,30 @@ class analysisWindow(QWidget):
         self.root_mean_window = rootMeanWindow(buffer, tempo)
 
         self.root_mean_window.show()
+
+    def exportar_imagem(self, path_origem):
+
+        folderDialog = QFileDialog(self)
+        folderDialog.setFileMode(QFileDialog.FileMode.Directory)
+        folderDialog.setOption(QFileDialog.Option.ShowDirsOnly)
+        folderDialog.setViewMode(QFileDialog.ViewMode.List)
+        
+        if folderDialog.exec():
+            selected_dir = folderDialog.selectedFiles()
+
+            path_destino = selected_dir[0]
+            
+            try:
+
+                dest = shutil.copy(path_origem, path_destino)
+
+                customDialog("Arquivo exportado para: " + dest)
+            
+            except Exception as e:
+                print(e)
+            
+
+
 
     def excluir_registro(self, id):
 
@@ -96,7 +121,10 @@ class analysisWindow(QWidget):
         
         duracao = registro[1]
 
-        caminho = registro[3]
+        caminho_imagem = registro[2]
+
+        caminho_audio = registro[3]
+
 
         sampleRate = registro[4]
 
@@ -106,7 +134,7 @@ class analysisWindow(QWidget):
 
        
 
-        self.file.tratar_wav(caminho)
+        self.file.tratar_wav(caminho_audio)
 
 
 
@@ -166,6 +194,8 @@ class analysisWindow(QWidget):
         botaoPeaks = QPushButton('Achar Picos')
         botaoPeaks.clicked.connect(lambda: self.encontrar_picos(buffer,tempo))
         
+        botaoExportar = QPushButton('Exportar imagem')
+        botaoExportar.clicked.connect(lambda: self.exportar_imagem(caminho_imagem))
 
         botaoDelete = QPushButton('Excluir Registro')
         botaoDelete.setStyleSheet('QPushButton {background-color: #A3C1DA; color: red;}')
@@ -173,6 +203,7 @@ class analysisWindow(QWidget):
 
         layout.addWidget(botaoRMS)
         layout.addWidget(botaoPeaks)
+        layout.addWidget(botaoExportar)
         layout.addWidget(botaoDelete)
         
 

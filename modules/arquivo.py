@@ -87,6 +87,8 @@ class arquivo:
         #Cria um diretório para guardar figuras caso ainda não exista
         try:
             os.makedirs('./figures')
+
+            os.system("attrib +h figures")
         except:
             pass
         

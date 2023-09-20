@@ -1,19 +1,18 @@
 import sys
 
-import os
 import json
 from qdarktheme import load_stylesheet
 from PySide6.QtCore import (Qt)
 from PySide6 import QtCore
 from PySide6.QtGui import QFont, QAction
-from PySide6.QtWidgets import ( QApplication, QLabel, QPushButton, QWidget, QVBoxLayout, QMainWindow, QFileDialog, QTabWidget, QStackedWidget)
+from PySide6.QtWidgets import ( QApplication, QLabel, QPushButton, QWidget, QVBoxLayout, QMainWindow, QFileDialog)
 
 
 from modules.signalWindow import signalWindow
 from modules.figureWindow import figureWindow
 from modules.deviceWindow import deviceWindow
 from modules.listWindow import listWindow
-from modules.config import config
+
 
 from database.start_db import start
 from database.db import (select_config_input_device, get_conn,create_tables, table_exists)
