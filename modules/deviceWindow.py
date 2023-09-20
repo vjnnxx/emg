@@ -1,4 +1,3 @@
-import time
 import json
 
 from PySide6.QtCore import Qt
@@ -39,7 +38,7 @@ class deviceWindow(QWidget):
 
         create_config(conn, data)
 
-        ("Dispositivo selecionado com sucesso!")
+        customDialog("Dispositivo selecionado com sucesso!")
 
         print('Dispositivo escolhido: ' + str(self.selected))
 

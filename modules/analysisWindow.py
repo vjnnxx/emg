@@ -156,10 +156,6 @@ class analysisWindow(QWidget):
         soma_quadrados = np.sum(buffer_quadrado)
 
 
-        media = soma_quadrados/tamanho
-
-        raiz_quadrada_media = np.sqrt(media)
-
         buffer = np.sqrt(buffer_quadrado)
 
 
