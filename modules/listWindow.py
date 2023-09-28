@@ -23,8 +23,11 @@ class listWindow(QWidget):
 
     def create_callback(self, info):
         def button_clicked():
-            self.janela_analise = analysisWindow(info)
-            self.janela_analise.show()
+            try:
+                self.janela_analise = analysisWindow(info)
+                self.janela_analise.show()
+            except Exception as e:
+                print(e)
         return button_clicked
     
     
@@ -44,10 +47,6 @@ class listWindow(QWidget):
         conn = get_conn()
 
         analises = select_all_wav_data(conn)
-
-        #print(analises)
-        
-        #print(analises[1][2])
 
         
         linhas = len(analises)

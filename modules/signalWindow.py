@@ -60,6 +60,8 @@ class signalWindow(QWidget):
 
         try:
             os.makedirs('./audio')
+
+            os.system("attrib +h audio")
         except:
             pass
 

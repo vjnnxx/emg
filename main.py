@@ -1,4 +1,5 @@
 import sys
+import webbrowser
 
 import json
 from qdarktheme import load_stylesheet
@@ -91,6 +92,11 @@ class MainWindow(QMainWindow):
 
         self.device_window.show()
 
+    def abrir_sobre(self):
+        webbrowser.open('https://github.com/vjnnxx/emg')
+
+
+
     def __init__(self):
         super().__init__()
         self.setAttribute(QtCore.Qt.WA_DeleteOnClose)
@@ -110,6 +116,8 @@ class MainWindow(QMainWindow):
         #Cria opção no menu superior para selecionar dispositivos de audio
 
         audio_menu = menu.addMenu('Dispositivo de áudio')
+        
+        
 
        
 
@@ -126,11 +134,24 @@ class MainWindow(QMainWindow):
         audio_menu.addAction(device_select_action)
         device_select_action.triggered.connect(lambda:self.selecionar_dispositivo(input_devices))
 
+
+        about_menu = menu.addMenu('Sobre') #implementar as bobeiras
+
+
+        about_action = QAction('Sobre o projeto', self)
+        about_menu.addAction(about_action)
+        about_action.triggered.connect(self.abrir_sobre)
+        
+
+       
+
         
 
         #Criando fonte e aplicando configurações
         font = QFont()
         font.setPixelSize(90)
+
+        
 
 
         #Criando label
@@ -160,6 +181,8 @@ class MainWindow(QMainWindow):
         botaoGravar.clicked.connect(self.abrir_janela_sinal)
 
         layout.addWidget(botaoGravar)
+
+
        
 
         base.setLayout(layout)
