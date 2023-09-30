@@ -1,9 +1,7 @@
-
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (QWidget, QVBoxLayout, QLabel, QPushButton, QTableWidget, QTableWidgetItem, QStyledItemDelegate)
 from PySide6.QtGui import (QFont)
 
-from modules.dialogo import customDialog
 from modules.analysisWindow import analysisWindow
 
 from database.db import *

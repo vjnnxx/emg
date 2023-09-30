@@ -13,7 +13,6 @@ from database.db import *
 
 import numpy as np
 from modules.canvas import Canvas
-import matplotlib.pyplot as plt
 
 #Janela de gráfico dos arquivos externos
 class analysisWindow(QWidget):
@@ -152,8 +151,6 @@ class analysisWindow(QWidget):
         '''Cálculo do RMS'''
 
         buffer_quadrado = buffer ** 2
-
-        soma_quadrados = np.sum(buffer_quadrado)
 
 
         buffer = np.sqrt(buffer_quadrado)

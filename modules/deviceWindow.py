@@ -8,7 +8,6 @@ from modules.dialogo import customDialog
 
 from database.db import (get_conn,create_config)
 
-from modules.canvas import Canvas
 
 #Janela de gráfico dos arquivos externos
 class deviceWindow(QWidget):
