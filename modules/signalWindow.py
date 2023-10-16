@@ -1,4 +1,3 @@
-import sys
 import os
 import wave
 import sounddevice as sd
@@ -10,7 +9,7 @@ from modules.arquivo import arquivo
 from modules.dialogo import customDialog
 
 from PySide6.QtCore import (QThreadPool, QTimer)
-from PySide6.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QWidget, QPushButton, QLabel
+from PySide6.QtWidgets import QVBoxLayout, QWidget, QPushButton, QLabel
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
 
 class Player:
@@ -98,6 +97,8 @@ class signalWindow(QWidget):
 
         self.botaoGravar.setEnabled(True)
         self.botaoParar.setEnabled(False)
+
+        
 
         customDialog('Gravação salva com sucesso!')
 

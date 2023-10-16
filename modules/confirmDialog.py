@@ -1,5 +1,4 @@
 from PySide6.QtWidgets import (QDialog, QDialogButtonBox, QVBoxLayout, QLabel)
-from PySide6.QtGui import QIcon
 
 class confirmDialog(QDialog):
     def __init__(self):

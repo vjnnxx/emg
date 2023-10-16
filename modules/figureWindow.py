@@ -1,7 +1,4 @@
-import time
-
-
-from PySide6.QtCore import (Qt, QTimer, QDateTime)
+from PySide6.QtCore import (Qt)
 from PySide6.QtWidgets import (QWidget, QVBoxLayout, QLabel, QPushButton)
 
 from modules.dialogo import customDialog
