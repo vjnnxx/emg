@@ -25,6 +25,7 @@ class rootMeanWindow(QWidget):
 
     def rodar_att(self):
         self.thread_manager.start(self.atualizar_canva)
+        
 
         
 
@@ -46,7 +47,7 @@ class rootMeanWindow(QWidget):
         for x in range(len(self.buffer - janela + 1)):
             self.media_movel.append(np.mean(self.buffer[x:x+janela]))
 
-            self.progressBar.setValue(x + 1)
+            #self.progressBar.setValue(x + 1)
 
 
         self.canva.ax.clear()
@@ -139,7 +140,7 @@ class rootMeanWindow(QWidget):
         
 
         botao = QPushButton('Calcular')
-        botao.clicked.connect(self.rodar_att) # A cada x tempo calcula a média dos valores do buffer e coloca em um novo buffer pra formar linha no gráfico
+        botao.clicked.connect(self.rodar_att) 
         
         botaoExportar = QPushButton('Exportar imagem')
         botaoExportar.clicked.connect(self.exportar_imagem) 

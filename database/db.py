@@ -161,7 +161,6 @@ create_tables(conn)
 config_exists = select_config_input_device(conn)
 
 if config_exists == None:
-    print('Tabela ta vazia mané')
     config = {'id': 0}
 
     
@@ -170,50 +169,6 @@ if config_exists == None:
     data = ('input_device', config)
 
     create_config(conn, data)
-    
-
-
-
-
-'''Testando algumas paradas'''
-'''
-import numpy as np
-
-
-
-buffer = select_buffer_wav_data(conn, 1)
-
-
-
-buffer = json.loads(buffer[0])
-
-buffer = np.array(buffer)
-
-buffer = buffer/10000
-
-
-tamanho = np.size(buffer)
-
-buffer_quadrado = buffer ** 2
-
-soma = np.sum(buffer_quadrado)
-
-
-media = soma/tamanho
-
-raiz_quadrada_media = np.sqrt(media)
-
-print(raiz_quadrada_media)
-
-tempo = np.linspace(1, 100, 100)
-
-print(tempo)
-
-
-
-
-#buffer_quadrado = buffer ** 2
-'''
 
 
 

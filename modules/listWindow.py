@@ -9,7 +9,6 @@ from database.db import *
 #Ativa evento que impede edição da tabela
 class ReadOnlyDelegate(QStyledItemDelegate):
     def createEditor(self, parent, option, index):
-        #print('evento createEditor disparado')
         return
 
 #Janela de listagem de itens salvos no banco
@@ -101,7 +100,7 @@ class listWindow(QWidget):
 
         #Criando fonte e aplicando configurações
         font = QFont()
-        font.setPixelSize(90)
+        font.setPixelSize(60)
 
         button = QPushButton('Voltar')
         button.setFont(font)

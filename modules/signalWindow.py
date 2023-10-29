@@ -239,17 +239,6 @@ class signalWindow(QWidget):
     def update_plot(self, indata):
         # Atualiza os dados do gráfico
 
-        '''
-        self.y_data[:-1] = self.y_data[1:]  # Desloca os valores existentes para a esquerda
-        self.y_data[-1] = indata  # Adiciona o novo valor no final
-
-        # Atualiza o gráfico com os novos dados
-        self.line.set_ydata(self.y_data)
-
-        # Atualiza o canvas
-        self.canvas.draw()
-        '''
-
         # Incrementa o contador de atualização
         self.update_counter += 1
         
