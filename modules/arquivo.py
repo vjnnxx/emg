@@ -137,26 +137,5 @@ class arquivo:
 
         conn.close()
 
-    def calcular_rms(buffer):
-
-        buffer = json.loads(buffer[0])
-
-        buffer = np.array(buffer)
-
-        buffer = buffer/10000
-
-
-        tamanho = np.size(buffer)
-
-        buffer_quadrado = buffer ** 2
-
-        soma = np.sum(buffer_quadrado)
-
-
-        media = soma/tamanho
-
-        raiz_quadrada_media = np.sqrt(media)
-
-        print(raiz_quadrada_media)
 
     

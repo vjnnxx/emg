@@ -70,9 +70,6 @@ class analysisWindow(QWidget):
             caminho_imagem = registro[2]
             caminho_audio = registro[3]
 
-            print(caminho_imagem)
-
-            print(caminho_audio)
 
             if os.path.isfile(caminho_imagem):
                 os.remove(caminho_imagem)

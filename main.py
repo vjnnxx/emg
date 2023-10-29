@@ -2,7 +2,6 @@ import sys
 import webbrowser
 
 import json
-from qdarktheme import load_stylesheet
 from PySide6.QtCore import (Qt)
 from PySide6 import QtCore
 from PySide6.QtGui import QFont, QAction
@@ -149,7 +148,7 @@ class MainWindow(QMainWindow):
 
         #Criando fonte e aplicando configurações
         font = QFont()
-        font.setPixelSize(90)
+        font.setPixelSize(60)
 
         
 
@@ -193,7 +192,6 @@ class MainWindow(QMainWindow):
 
 
 app = QApplication(sys.argv)
-app.setStyleSheet(load_stylesheet())
 
 
 janela = MainWindow()
