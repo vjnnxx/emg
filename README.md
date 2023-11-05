@@ -16,5 +16,14 @@ Muscle SpikerBox: https://backyardbrains.com/products/muscleSpikerboxBundle
 
 ## Observações
 
-1- Devido à limitação de alguns módulos o sistema pode não funcionar corretamente com versões do Python maiores que 3.10
-2- O sistema foi desenvolvido e testado utilizando o sistemas operacionais Windows, e pode não funcionar de forma correta em outros sistemas
+- Devido à limitação de alguns módulos o sistema pode não funcionar corretamente com versões do Python maiores que 3.10
+- O sistema foi desenvolvido e testado utilizando o sistemas operacionais Windows, e pode não funcionar de forma correta em outros sistemas
+
+
+## Licença
+
+[GPL-3.0] (https://choosealicense.com/licenses/gpl-3.0/)
+
+
+
+
