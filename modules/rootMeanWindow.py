@@ -1,5 +1,6 @@
 from PySide6.QtCore import (QThreadPool)
 from PySide6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QFormLayout,QLabel, QPushButton, QLineEdit, QFileDialog, QProgressBar)
+from PySide6.QtGui import (QIcon)
 
 
 from modules.canvas import Canvas
@@ -92,6 +93,8 @@ class rootMeanWindow(QWidget):
             
     def __init__(self, buffer_quadrado, tempo):
         super().__init__()
+
+        self.setWindowIcon(QIcon('./sound-wave.ico'))
 
 
         self.buffer = buffer_quadrado

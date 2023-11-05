@@ -1,8 +1,13 @@
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (QWidget, QVBoxLayout, QLabel, QPushButton, QTableWidget, QTableWidgetItem, QStyledItemDelegate)
-from PySide6.QtGui import (QFont)
+from PySide6.QtGui import (QFont, QIcon)
+
+import os
 
 from modules.analysisWindow import analysisWindow
+from modules.alertDialog import alertDialog
+from modules.confirmDialog import confirmDialog
+from modules.dialogo import customDialog
 
 from database.db import *
 
@@ -17,15 +22,73 @@ class listWindow(QWidget):
     def voltar(self):
         self.close()
 
+    def excluir_registro(self, id):
 
-    def create_callback(self, info):
+        
+        dialog = confirmDialog()
+
+        if dialog.exec_():
+            #Excluir arquivos relacionados
+
+            conn = get_conn()
+
+            registro = select_wav_data(conn, id)
+
+            caminho_imagem = registro[2]
+            caminho_audio = registro[3]
+
+
+            if os.path.isfile(caminho_imagem):
+                os.remove(caminho_imagem)
+            else:
+                print("Erro, arquivo não encontrado.")
+
+            audio_check = caminho_audio.startswith('./audio')
+
+            #Exclui arquivo de áudio caso tenha sido gravado pelo sistema
+            if audio_check: #transformar em função mais tarde
+                if os.path.isfile(caminho_audio):
+                    os.remove(caminho_audio)
+                else:
+                    print("Erro, arquivo não encontrado.")
+            
+            try:
+
+                self.voltar()
+                delete_wav_data(conn=conn, id=id)
+                print("Registro excluído com sucesso!")
+                customDialog("Registro excluído com sucesso! Por favor reabra a janela.")
+ 
+            except Exception as e:
+                print(e)
+            conn.close()
+            print('Confirmado')
+
+        else:
+            print('Melhor não!')
+
+
+    def create_callback_abrir(self, info):
         def button_clicked():
             try:
                 self.janela_analise = analysisWindow(info)
                 self.janela_analise.show()
             except Exception as e:
+                alertDialog('Arquivo de áudio não encontrado!')
                 print(e)
         return button_clicked
+    
+
+    def create_callback_delete(self, info):
+        def button_clicked():
+            try:
+                self.excluir_registro(info)
+            except Exception as e:
+                alertDialog('Algo deu errado!')
+                print(e)
+        return button_clicked
+    
+
     
     
 
@@ -35,7 +98,8 @@ class listWindow(QWidget):
         layout = QVBoxLayout()
 
         self.setWindowTitle("Arquivos Salvos")
-        self.resize(900, 500)
+        self.resize(1000, 500)
+        self.setWindowIcon(QIcon('./sound-wave.ico'))
 
         self.label = QLabel("Lista de análises")
         self.label.setAlignment(Qt.AlignCenter)
@@ -57,8 +121,8 @@ class listWindow(QWidget):
         
 
         self.tabela.setRowCount(linhas)
-        self.tabela.setColumnCount(colunas+1)
-        self.tabela.setHorizontalHeaderLabels(["ID", "Nome", "Data","Duracao", "Caminho imagem", "Caminho Audio", "-"])
+        self.tabela.setColumnCount(colunas+2)
+        self.tabela.setHorizontalHeaderLabels(["ID", "Nome", "Data","Duracao", "Caminho imagem", "Caminho Audio", "-", "x"])
         
         
 
@@ -77,17 +141,25 @@ class listWindow(QWidget):
             for j in range(colunas):
                 self.tabela.setItem(x, j, QTableWidgetItem(str(analises[x][j])))
             
+            callback_abrir = self.create_callback_abrir(ids[x])
 
-            btn = QPushButton(self.tabela)
+            btnAbrir = QPushButton(self.tabela)
+
+            btnAbrir.clicked.connect(callback_abrir)
+            btnAbrir.setText("Abrir")
+
+            callback_delete = self.create_callback_delete(ids[x])
+
+            btnDelete = QPushButton(self.tabela)
+            btnDelete.clicked.connect(callback_delete)
+            btnDelete.setText('Excluir')
 
 
-            callback = self.create_callback(ids[x])
-
-            btn.clicked.connect(callback)
-            btn.setText("Abrir")
 
             
-            self.tabela.setCellWidget(x, 6, btn)
+            self.tabela.setCellWidget(x, 6, btnAbrir)
+
+            self.tabela.setCellWidget(x, 7, btnDelete)
 
         
 

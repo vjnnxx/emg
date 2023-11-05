@@ -3,6 +3,7 @@ import shutil
 
 from PySide6.QtCore import (Qt)
 from PySide6.QtWidgets import (QWidget, QVBoxLayout, QLabel, QPushButton, QFileDialog)
+from PySide6.QtGui import (QIcon)
 
 from modules.findPeakWindow import findPeakWindow
 from modules.rootMeanWindow import rootMeanWindow
@@ -106,7 +107,9 @@ class analysisWindow(QWidget):
 
         self.setWindowTitle("Registros Salvos")
 
+        self.setWindowIcon(QIcon('./sound-wave.ico'))
 
+        
         self.file = arquivo()
         
         conn = get_conn()

@@ -1,5 +1,6 @@
 from PySide6.QtCore import (Qt)
 from PySide6.QtWidgets import (QWidget, QVBoxLayout, QLabel, QPushButton)
+from PySide6.QtGui import (QIcon)
 
 from modules.dialogo import customDialog
 from modules.arquivo import arquivo
@@ -13,6 +14,7 @@ class figureWindow(QWidget):
             
     def __init__(self, caminho):
         super().__init__()
+        self.setWindowIcon(QIcon('./sound-wave.ico'))
         
         self.file = arquivo()
 
