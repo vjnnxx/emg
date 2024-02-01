@@ -2,11 +2,14 @@ import sqlite3
 from sqlite3 import Error
 
 def get_conn():
+    
     try:
         conn = sqlite3.connect('emg.db')
     except Error as e:
         print(e)
+    
     return conn
+    
 
 
 '''Operações da tabela wav_data'''
@@ -120,6 +123,7 @@ def create_tables(conn):
 
     cursor = conn.cursor()
 
+    #configs
     try:
         sql = "CREATE TABLE IF NOT EXISTS configs (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, name VARCHAR(30), config VARCHAR(100));"
         cursor.execute(sql)
@@ -128,6 +132,9 @@ def create_tables(conn):
     except Exception as e:
         print(e)
 
+
+
+    #wav_data
     try:
         sql = "CREATE TABLE IF NOT EXISTS wav_data (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT , nome VARCHAR(30) NOT NULL, data DATE,duracao INTEGER NOT NULL, image_path VARCHAR(50), audio_path VARCHAR(50), audio_buffer BLOB, sample_rate INTEGER NOT NULL);"
         cursor.execute(sql)
@@ -135,6 +142,25 @@ def create_tables(conn):
     except Exception as e:
         print(e)
 
+
+    #Pessoas
+
+    try:
+        sql = "CREATE TABLE IF NOT EXISTS pessoas (PessoaID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, nome VARCHAR(30), data_nasc DATE, observacoes TEXT);"
+        cursor.execute(sql)
+        print("Tabela pessoas criada com sucesso!")
+    except Exception as e:
+        print(e)
+
+
+    #analises
+        
+    try: 
+        sql = "CREATE TABLE IF NOT EXISTS analises (AnaliseID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, PessoaID INTEGER, id_wav_data INTEGER, FOREIGN KEY (PessoaID) REFERENCES pessoas (PessoaID), FOREIGN KEY (id_wav_data) REFERENCES wav_data (id));"
+        cursor.execute(sql)
+        print("Tabela analises criada com sucesso!")
+    except Exception as e:
+        print(e)
 
 def table_exists(conn):
 

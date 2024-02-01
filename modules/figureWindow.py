@@ -33,6 +33,7 @@ class figureWindow(QWidget):
         canva = Canvas()
         canva.ax.set_title(self.file.nome_arquivo)
         canva.ax.set_xlabel('Tempo [s]')
+        canva.ax.set_ylim(-4,4)
         canva.ax.set_ylabel('Amplitude [Hz]')
 
         canva.ax.plot(self.file.tempo, self.file.audioBuffer/10000)

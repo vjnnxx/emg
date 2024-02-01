@@ -26,6 +26,7 @@ conn = get_conn()
 table_check = table_exists(conn)
 table_check = table_check[0]
 
+
 if table_check == 0:
     start() 
 

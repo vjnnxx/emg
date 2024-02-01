@@ -84,6 +84,11 @@ class arquivo:
             return 'Dados faltantes!'
         
 
+        
+        
+
+        print(np.ndarray.max(self.audioBuffer/10000))
+
         #Cria um diretório para guardar figuras caso ainda não exista
         try:
             os.makedirs('./figures')
@@ -97,6 +102,7 @@ class arquivo:
         a = fig.add_subplot(111)
 
         a.plot(self.tempo, self.audioBuffer/10000)
+
 
         plt.xlabel('Tempo [s]')
         plt.ylabel('Amplitude [Hz]')
