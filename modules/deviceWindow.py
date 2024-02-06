@@ -2,6 +2,7 @@ import json
 
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (QWidget, QVBoxLayout, QLabel, QPushButton, QComboBox)
+from PySide6.QtGui import (QIcon)
 
 from modules.dialogo import customDialog
 
@@ -48,6 +49,8 @@ class deviceWindow(QWidget):
         super().__init__()
 
         self.setWindowTitle("Selecionar dispositivo")
+
+        self.setWindowIcon(QIcon('./sound-wave.ico'))
 
         self.devices = devices
         

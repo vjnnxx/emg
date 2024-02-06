@@ -12,7 +12,7 @@ pip install -r requirements.txt
 
 ## Equipamento utilizado para captação de sinal
 
-Muscle SpikerBox: https://backyardbrains.com/products/muscleSpikerboxBundle
+Muscle 2-Channel SpikerBox: https://backyardbrains.com/products/emgTwoChannelSpikerbox
 
 ## Observações
 

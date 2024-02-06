@@ -1,5 +1,6 @@
 from PySide6.QtCore import (QThreadPool)
 from PySide6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QFormLayout,QLabel, QPushButton, QLineEdit, QFileDialog, QProgressBar)
+from PySide6.QtGui import (QIcon)
 
 
 from modules.canvas import Canvas
@@ -64,9 +65,6 @@ class rootMeanWindow(QWidget):
 
     def exportar_imagem(self):
 
-        nome_arquivo = random_string()
-
-        self.canva.print_figure(nome_arquivo)
 
         folderDialog = QFileDialog(self)
         folderDialog.setFileMode(QFileDialog.FileMode.Directory)
@@ -74,11 +72,16 @@ class rootMeanWindow(QWidget):
         folderDialog.setViewMode(QFileDialog.ViewMode.List)
         
         if folderDialog.exec():
+            
+
             selected_dir = folderDialog.selectedFiles()
 
             path_destino = selected_dir[0]
             
             try:
+
+                nome_arquivo = random_string()
+                self.canva.print_figure(nome_arquivo)
 
                 dest = shutil.copy(nome_arquivo, path_destino)
 
@@ -92,6 +95,8 @@ class rootMeanWindow(QWidget):
             
     def __init__(self, buffer_quadrado, tempo):
         super().__init__()
+
+        self.setWindowIcon(QIcon('./sound-wave.ico'))
 
 
         self.buffer = buffer_quadrado

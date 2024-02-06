@@ -4,7 +4,7 @@ import webbrowser
 import json
 from PySide6.QtCore import (Qt)
 from PySide6 import QtCore
-from PySide6.QtGui import QFont, QAction
+from PySide6.QtGui import QFont, QAction, QIcon
 from PySide6.QtWidgets import ( QApplication, QLabel, QPushButton, QWidget, QVBoxLayout, QMainWindow, QFileDialog)
 
 
@@ -25,6 +25,7 @@ conn = get_conn()
 #Verifica e cria as tabelas caso ainda não existam no banco
 table_check = table_exists(conn)
 table_check = table_check[0]
+
 
 if table_check == 0:
     start() 
@@ -76,10 +77,7 @@ class MainWindow(QMainWindow):
 
     def abrir_janela_analises(self):
         self.janela_analises = listWindow()
-
-        self.janela_analises.setGeometry(1000, 50, 500, 500)
-        #stack.addWidget(janela_analises)
-        #stack.setCurrentIndex(stack.currentIndex()+1)
+        self.janela_analises.setGeometry(500, 300, 500, 500)
         self.janela_analises.show()
         
 
@@ -100,6 +98,8 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.setAttribute(QtCore.Qt.WA_DeleteOnClose)
         self.setWindowTitle('EMG')
+
+        self.setWindowIcon(QIcon('./sound-wave.ico'))
 
         base = QWidget()
         layout = QVBoxLayout()

@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 from modules.arquivo import arquivo
 from modules.dialogo import customDialog
 
+from PySide6.QtGui import (QIcon)
 from PySide6.QtCore import (QThreadPool, QTimer)
 from PySide6.QtWidgets import QVBoxLayout, QWidget, QPushButton, QLabel
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
@@ -132,6 +133,8 @@ class signalWindow(QWidget):
     
     
     def __init__(self, input_device):
+
+        #self.setWindowIcon(QIcon('./sound-wave.ico'))
 
         self.file = arquivo()
 

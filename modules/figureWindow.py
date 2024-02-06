@@ -1,5 +1,6 @@
 from PySide6.QtCore import (Qt)
 from PySide6.QtWidgets import (QWidget, QVBoxLayout, QLabel, QPushButton)
+from PySide6.QtGui import (QIcon)
 
 from modules.dialogo import customDialog
 from modules.arquivo import arquivo
@@ -13,6 +14,7 @@ class figureWindow(QWidget):
             
     def __init__(self, caminho):
         super().__init__()
+        self.setWindowIcon(QIcon('./sound-wave.ico'))
         
         self.file = arquivo()
 
@@ -31,6 +33,7 @@ class figureWindow(QWidget):
         canva = Canvas()
         canva.ax.set_title(self.file.nome_arquivo)
         canva.ax.set_xlabel('Tempo [s]')
+        canva.ax.set_ylim(-4,4)
         canva.ax.set_ylabel('Amplitude [Hz]')
 
         canva.ax.plot(self.file.tempo, self.file.audioBuffer/10000)

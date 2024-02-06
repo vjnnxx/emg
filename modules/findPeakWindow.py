@@ -3,6 +3,7 @@ import os
 
 from PySide6.QtCore import (Qt)
 from PySide6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QFormLayout,QLabel, QPushButton, QLineEdit, QFileDialog)
+from PySide6.QtGui import (QIcon)
 
 
 from scipy.signal import find_peaks
@@ -33,7 +34,7 @@ class findPeakWindow(QWidget):
 
         self.canva.ax.clear()
         
-        picos, _ = find_peaks(self.buffer, self.threshold)
+        picos, _ = find_peaks(self.buffer, self.threshold, distance=4410) #acha picos a cada 100 ms
 
         self.canva.ax.plot(self.buffer)
         
@@ -74,6 +75,7 @@ class findPeakWindow(QWidget):
             
     def __init__(self, buffer_quadrado, tempo):
         super().__init__()
+        self.setWindowIcon(QIcon('./sound-wave.ico'))
 
 
         self.buffer = buffer_quadrado
@@ -102,9 +104,9 @@ class findPeakWindow(QWidget):
 
         
         
-        picos, _ = find_peaks(self.buffer, self.threshold)
+        picos, _ = find_peaks(self.buffer, self.threshold, distance=4410) # picos a cada 100 ms
 
-        self.canva.ax.plot(self.tempo, self.buffer)
+        self.canva.ax.plot(self.buffer)
         
         self.canva.ax.plot(picos, self.buffer[picos], "x")
 
