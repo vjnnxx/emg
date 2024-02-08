@@ -12,6 +12,7 @@ from modules.signalWindow import signalWindow
 from modules.figureWindow import figureWindow
 from modules.deviceWindow import deviceWindow
 from modules.listWindow import listWindow
+from modules.testWindow import testWindow
 
 
 from database.start_db import start
@@ -91,6 +92,12 @@ class MainWindow(QMainWindow):
 
     def abrir_sobre(self):
         webbrowser.open('https://github.com/vjnnxx/emg')
+
+    def abrir_janela_teste(self):
+
+        self.janela = testWindow()
+        self.janela.show()
+       
 
 
 
@@ -178,8 +185,17 @@ class MainWindow(QMainWindow):
         botaoGravar = QPushButton('Gravar Sinal')
         botaoGravar.setFont(font)
         botaoGravar.clicked.connect(self.abrir_janela_sinal)
-
         layout.addWidget(botaoGravar)
+
+        #Testando layout novo
+
+        botaoTeste = QPushButton('Teste')
+        botaoTeste.setFont(font)
+        botaoTeste.clicked.connect(self.abrir_janela_teste)
+
+        
+
+        layout.addWidget(botaoTeste)
 
 
        

@@ -35,6 +35,15 @@ def select_wav_data(conn, id):
 
     return row
 
+def select_all_pessoas(conn):
+    cursor = conn.cursor()
+
+    sql = 'SELECT PessoaID, nome, data_nasc FROM pessoas;'
+
+    rows = cursor.execute(sql).fetchall()
+    
+    return rows
+
 
 def select_buffer_wav_data(conn, id):
 
