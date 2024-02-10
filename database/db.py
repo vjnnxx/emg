@@ -35,15 +35,6 @@ def select_wav_data(conn, id):
 
     return row
 
-def select_all_pessoas(conn):
-    cursor = conn.cursor()
-
-    sql = 'SELECT PessoaID, nome, data_nasc FROM pessoas;'
-
-    rows = cursor.execute(sql).fetchall()
-    
-    return rows
-
 
 def select_buffer_wav_data(conn, id):
 
@@ -124,6 +115,29 @@ def select_config_input_device(conn):
 
     return input
 
+
+'''Operações da tabela pessoas'''
+
+def select_all_pessoas(conn):
+    cursor = conn.cursor()
+
+    sql = 'SELECT PessoaID, nome, data_nasc FROM pessoas;'
+
+    rows = cursor.execute(sql).fetchall()
+    
+    return rows
+
+def create_pessoa(conn, pessoa):
+
+    cursor = conn.cursor()
+
+    sql = 'INSERT INTO pessoas (nome, data_nasc, observacoes) VALUES (?, ?, ?);'
+
+    cursor.execute(sql,pessoa)
+
+    conn.commit()
+
+    return cursor.lastrowid
 
 
 '''Função para criar tabelas'''

@@ -6,8 +6,7 @@ import os
 
 from modules.analysisWindow import analysisWindow
 from modules.alertDialog import alertDialog
-from modules.confirmDialog import confirmDialog
-from modules.dialogo import customDialog
+from modules.pessoaForm import pessoaForm
 
 from database.db import *
 
@@ -16,56 +15,12 @@ class ReadOnlyDelegate(QStyledItemDelegate):
     def createEditor(self, parent, option, index):
         return
 
-#Janela de listagem de itens salvos no banco
+
 class testWindow(QWidget):
 
-    def voltar(self):
-        self.close()
-
-    def excluir_registro(self, id):
-
-        
-        dialog = confirmDialog()
-
-        if dialog.exec_():
-            #Excluir arquivos relacionados
-
-            conn = get_conn()
-
-            registro = select_wav_data(conn, id)
-
-            caminho_imagem = registro[2]
-            caminho_audio = registro[3]
-
-
-            if os.path.isfile(caminho_imagem):
-                os.remove(caminho_imagem)
-            else:
-                print("Erro, arquivo não encontrado.")
-
-            audio_check = caminho_audio.startswith('./audio')
-
-            #Exclui arquivo de áudio caso tenha sido gravado pelo sistema
-            if audio_check: #transformar em função mais tarde
-                if os.path.isfile(caminho_audio):
-                    os.remove(caminho_audio)
-                else:
-                    print("Erro, arquivo não encontrado.")
-            
-            try:
-
-                self.voltar()
-                delete_wav_data(conn=conn, id=id)
-                print("Registro excluído com sucesso!")
-                customDialog("Registro excluído com sucesso! Por favor reabra a janela.")
- 
-            except Exception as e:
-                print(e)
-            conn.close()
-            print('Confirmado')
-
-        else:
-            print('Melhor não!')
+    def cadastrar(self):
+        self.janela_cadastrar = pessoaForm()
+        self.janela_cadastrar.show()
 
 
     def create_callback_abrir(self, info):
@@ -79,25 +34,12 @@ class testWindow(QWidget):
         return button_clicked
     
 
-    def create_callback_delete(self, info):
-        def button_clicked():
-            try:
-                self.excluir_registro(info)
-            except Exception as e:
-                alertDialog('Algo deu errado!')
-                print(e)
-        return button_clicked
-    
-
-    
-    
-
     def __init__(self):
         super().__init__()
 
         layout_tabela = QVBoxLayout()
 
-        self.setWindowTitle("Teste")
+        self.setWindowTitle("EMG")
         self.resize(600, 500)
         self.setWindowIcon(QIcon('./sound-wave.ico'))
 
@@ -177,7 +119,7 @@ class testWindow(QWidget):
 
         button = QPushButton('Cadastrar Pessoa')
         button.setFont(font)
-        button.clicked.connect(self.voltar)
+        button.clicked.connect(self.cadastrar)
 
         layout_tabela.addWidget(button)
 
