@@ -7,7 +7,6 @@ import os
 from modules.analysisWindow import analysisWindow
 from modules.alertDialog import alertDialog
 from modules.pessoaForm import pessoaForm
-from modules.pessoaWindow import pessoaWindow
 
 from database.db import *
 
@@ -17,7 +16,7 @@ class ReadOnlyDelegate(QStyledItemDelegate):
         return
 
 
-class testWindow(QWidget):
+class pessoaWindow(QWidget):
 
     def cadastrar(self):
         self.janela_cadastrar = pessoaForm()
@@ -27,27 +26,26 @@ class testWindow(QWidget):
     def create_callback_abrir(self, info):
         def button_clicked():
             try:
-                self.janela_expandida = pessoaWindow(info)
-                self.janela_expandida.show()
+                print('TELA COM LISTA DE REGISTROS E OPÇÕES DE GRAVAR')
             except Exception as e:
                 alertDialog('Arquivo de áudio não encontrado!')
                 print(e)
         return button_clicked
     
 
-    def __init__(self):
+    def __init__(self, id):
         super().__init__()
 
         layout_tabela = QVBoxLayout()
 
-        self.setWindowTitle("EMG")
+        self.setWindowTitle("PESSOA #001")
         self.resize(600, 500)
         self.setWindowIcon(QIcon('./sound-wave.ico'))
 
         title_font = QFont()
         title_font.setPixelSize(45)
 
-        self.label = QLabel("Pessoas cadastradas")
+        self.label = QLabel("Análises de Pessoa #001")
         self.label.setAlignment(Qt.AlignCenter)
         self.label.setFont(title_font)
         layout_tabela.addWidget(self.label)
@@ -56,11 +54,11 @@ class testWindow(QWidget):
 
         conn = get_conn()
 
-        pessoas = select_all_pessoas(conn)
+        analises = get_analise_by_id_individuo(conn, id)
 
         
-        linhas = len(pessoas)
-        colunas = 3
+        linhas = len(analises)
+        colunas = 2
 
         #cria tabela 
         self.tabela = QTableWidget()
@@ -71,7 +69,7 @@ class testWindow(QWidget):
 
         self.tabela.setRowCount(linhas)
         self.tabela.setColumnCount(colunas+1)
-        self.tabela.setHorizontalHeaderLabels(["ID", "Nome", "Nascimento", "-"])
+        self.tabela.setHorizontalHeaderLabels(["ID", "Nome", "Visualizar"])
 
         self.tabela.resize(300, 300)
         
@@ -79,13 +77,13 @@ class testWindow(QWidget):
 
         ids = []
 
-        for item in pessoas:
+        for item in analises:
             ids.append(item[0])
 
         for x in range(linhas):
             self.tabela.setItemDelegateForRow(x, delegate)
             for j in range(colunas):
-                self.tabela.setItem(x, j, QTableWidgetItem(str(pessoas[x][j])))
+                self.tabela.setItem(x, j, QTableWidgetItem(str(analises[x][j])))
             
             callback_abrir = self.create_callback_abrir(ids[x])
 
@@ -112,13 +110,20 @@ class testWindow(QWidget):
 
         layout_tabela.addWidget(self.tabela)
 
-        button = QPushButton('Cadastrar Pessoa')
-        button.setFont(font)
-        button.clicked.connect(self.cadastrar)
-
-        layout_tabela.addWidget(button)
-
         layout_horizontal.addLayout(layout_tabela)
+
+        layout_botoes = QVBoxLayout()
+
+        botao_abrir = QPushButton('Abrir arquivo')
+
+        botao_gravar = QPushButton('Gravar Sinal')
+
+        layout_botoes.addWidget(botao_abrir)
+
+        layout_botoes.addWidget(botao_gravar)
+
+        layout_horizontal.addLayout(layout_botoes)
+
               
 
         self.setLayout(layout_horizontal)
