@@ -35,15 +35,6 @@ def select_wav_data(conn, id):
 
     return row
 
-def select_all_pessoas(conn):
-    cursor = conn.cursor()
-
-    sql = 'SELECT PessoaID, nome, data_nasc FROM pessoas;'
-
-    rows = cursor.execute(sql).fetchall()
-    
-    return rows
-
 
 def select_buffer_wav_data(conn, id):
 
@@ -91,6 +82,7 @@ def delete_wav_data(conn, id):
 
     return cursor.lastrowid
 
+
 '''Operações da tabela configs'''
 
 def create_config(conn, config):
@@ -125,6 +117,44 @@ def select_config_input_device(conn):
     return input
 
 
+'''Operações da tabela pessoas'''
+
+def select_all_pessoas(conn):
+    cursor = conn.cursor()
+
+    sql = 'SELECT PessoaID, nome, data_nasc FROM pessoas;'
+
+    rows = cursor.execute(sql).fetchall()
+    
+    return rows
+
+def create_pessoa(conn, pessoa):
+
+    cursor = conn.cursor()
+
+    sql = 'INSERT INTO pessoas (nome, data_nasc, observacoes) VALUES (?, ?, ?);'
+
+    cursor.execute(sql,pessoa)
+
+    conn.commit()
+
+    return cursor.lastrowid
+
+'''Operações da tabela analises'''
+
+def get_analise_by_id_individuo(conn, id):
+
+    cursor = conn.cursor()
+
+    sql = 'SELECT AnaliseID, nome FROM analises WHERE PessoaID = ?'
+
+    id = str(id)
+
+    rows = cursor.execute(sql, [id]).fetchall()
+
+    return rows
+
+
 
 '''Função para criar tabelas'''
 
@@ -152,7 +182,7 @@ def create_tables(conn):
         print(e)
 
 
-    #Pessoas
+    #pessoas
 
     try:
         sql = "CREATE TABLE IF NOT EXISTS pessoas (PessoaID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, nome VARCHAR(30), data_nasc DATE, observacoes TEXT);"
@@ -165,7 +195,7 @@ def create_tables(conn):
     #analises
         
     try: 
-        sql = "CREATE TABLE IF NOT EXISTS analises (AnaliseID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, PessoaID INTEGER, id_wav_data INTEGER, FOREIGN KEY (PessoaID) REFERENCES pessoas (PessoaID), FOREIGN KEY (id_wav_data) REFERENCES wav_data (id));"
+        sql = "CREATE TABLE IF NOT EXISTS analises (AnaliseID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, nome VARCHAR(30), PessoaID INTEGER, id_wav_data INTEGER, FOREIGN KEY (PessoaID) REFERENCES pessoas (PessoaID), FOREIGN KEY (id_wav_data) REFERENCES wav_data (id));"
         cursor.execute(sql)
         print("Tabela analises criada com sucesso!")
     except Exception as e:

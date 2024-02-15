@@ -80,14 +80,14 @@ class arquivo:
     #Função para tratar os dados e salvar a figura
     def salvar_figura(self):
 
-        if(self.audioBuffer.size ==0 or self.tempo == ''):
+        if(self.audioBuffer.size == 0):
             return 'Dados faltantes!'
         
 
         
         
 
-        print(np.ndarray.max(self.audioBuffer/10000))
+        #(np.ndarray.max(self.audioBuffer/10000))
 
         #Cria um diretório para guardar figuras caso ainda não exista
         try:
