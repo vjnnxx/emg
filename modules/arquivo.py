@@ -78,13 +78,10 @@ class arquivo:
 
 
     #Função para tratar os dados e salvar a figura
-    def salvar_figura(self):
+    def salvar_figura(self, id):
 
         if(self.audioBuffer.size == 0):
             return 'Dados faltantes!'
-        
-
-        
         
 
         #(np.ndarray.max(self.audioBuffer/10000))
@@ -140,6 +137,10 @@ class arquivo:
         conn = get_conn()
 
         create_wav_data(conn=conn, wav_data = data)
+
+        #Pegar id do wav data e vincular a uma nova análise //Pensar na parte de análise 
+
+        # ideia de fluxo: nova analise -> escolher entre abrir e gravar -> mostrar análise expandida
 
         conn.close()
 

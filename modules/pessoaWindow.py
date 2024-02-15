@@ -1,12 +1,12 @@
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout ,QLabel, QPushButton, QTableWidget, QTableWidgetItem, QStyledItemDelegate)
+from PySide6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout ,QLabel, QPushButton, QTableWidget, QTableWidgetItem, QStyledItemDelegate, QFileDialog)
 from PySide6.QtGui import (QFont, QIcon)
 
-import os
 
-from modules.analysisWindow import analysisWindow
 from modules.alertDialog import alertDialog
 from modules.pessoaForm import pessoaForm
+from modules.figureWindow import figureWindow
+from modules.signalWindow import signalWindow
 
 from database.db import *
 
@@ -17,6 +17,39 @@ class ReadOnlyDelegate(QStyledItemDelegate):
 
 
 class pessoaWindow(QWidget):
+
+
+    #Abre janela do windows para selecionar arquivos .wav
+    def abrir_arquivo(self):
+        dialog = QFileDialog(self)
+        dialog.setFileMode(QFileDialog.FileMode.ExistingFiles)
+        dialog.setNameFilter("Audio (*.wav)")
+        dialog.setViewMode(QFileDialog.ViewMode.List)
+        if dialog.exec():
+            filename = dialog.selectedFiles()
+
+            caminho = filename[0]
+            
+
+            self.abrir_janela_arquivo(caminho, self.id)
+
+
+    def abrir_janela_arquivo(self, caminho, id):
+        self.janela_arquivo = figureWindow(caminho, id)
+
+
+        self.janela_arquivo.show()
+
+    def abrir_janela_sinal(self):
+
+        input_settings = select_config_input_device(conn)
+
+        device = json.loads(input_settings[2])
+
+        self.signal = signalWindow(device["id"])
+
+        
+        self.signal.show()
 
     def cadastrar(self):
         self.janela_cadastrar = pessoaForm()
@@ -35,6 +68,8 @@ class pessoaWindow(QWidget):
 
     def __init__(self, id):
         super().__init__()
+
+        self.id = id
 
         layout_tabela = QVBoxLayout()
 
@@ -91,10 +126,6 @@ class pessoaWindow(QWidget):
 
             btnAbrir.clicked.connect(callback_abrir)
             btnAbrir.setText("Expandir")
-
-
-
-
             
             self.tabela.setCellWidget(x, 3, btnAbrir)
 
@@ -115,8 +146,12 @@ class pessoaWindow(QWidget):
         layout_botoes = QVBoxLayout()
 
         botao_abrir = QPushButton('Abrir arquivo')
+        botao_abrir.setFont(font)
+        botao_abrir.clicked.connect(self.abrir_arquivo)
 
         botao_gravar = QPushButton('Gravar Sinal')
+        botao_gravar.setFont(font)
+        botao_gravar.clicked.connect(self.abrir_janela_sinal)
 
         layout_botoes.addWidget(botao_abrir)
 

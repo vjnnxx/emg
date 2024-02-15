@@ -12,9 +12,11 @@ import matplotlib.pyplot as plt
 class figureWindow(QWidget):
 
             
-    def __init__(self, caminho):
+    def __init__(self, caminho, id):
         super().__init__()
         self.setWindowIcon(QIcon('./sound-wave.ico'))
+
+        self.id = id
         
         self.file = arquivo()
 
@@ -55,7 +57,7 @@ class figureWindow(QWidget):
 
     def salvar_imagem(self):
         
-        self.file.salvar_figura()
+        self.file.salvar_figura(self.id)
 
 
         customDialog("Figura salva com sucesso!")
