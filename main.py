@@ -63,7 +63,7 @@ class MainWindow(QMainWindow):
                 self.janela_expandida = pessoaWindow(info)
                 self.janela_expandida.show()
             except Exception as e:
-                alertDialog('Arquivo de áudio não encontrado!')
+                alertDialog('Ops, ocorreu um erro!')
                 print(e)
         return button_clicked
 
@@ -188,10 +188,6 @@ class MainWindow(QMainWindow):
             btnAbrir.clicked.connect(callback_abrir)
             btnAbrir.setText("Expandir")
 
-
-
-
-            
             self.tabela.setCellWidget(x, 3, btnAbrir)
 
 

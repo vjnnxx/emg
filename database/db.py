@@ -142,7 +142,7 @@ def create_pessoa(conn, pessoa):
 
 '''Operações da tabela analises'''
 
-def get_analise_by_id_individuo(conn, id):
+def get_analise_by_pessoa_id(conn, id):
 
     cursor = conn.cursor()
 
@@ -154,7 +154,44 @@ def get_analise_by_id_individuo(conn, id):
 
     return rows
 
+def select_analise(conn, id):
 
+    cursor = conn.cursor()
+
+    sql = 'SELECT * FROM analises WHERE AnaliseID = ?'
+
+    id = str(id)
+
+    row = cursor.execute(sql,[id]).fetchone()
+
+    return row
+
+def get_id_wav_data(conn, id): # busca pelo id da análise
+
+    cursor = conn.cursor()
+
+    sql = 'SELECT id_wav_data FROM analises WHERE AnaliseID = ?'
+
+    id = str(id)
+
+    row = cursor.execute(sql,[id]).fetchone()
+
+    return row
+
+def delete_analise(conn, id):
+
+    sql = "DELETE FROM analises WHERE AnaliseID = ?"
+
+    cursor = conn.cursor()
+
+    id = str(id)
+
+    cursor.execute(sql, [id])
+
+    conn.commit()
+
+    return cursor.lastrowid
+    
 
 '''Função para criar tabelas'''
 

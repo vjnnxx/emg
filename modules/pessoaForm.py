@@ -91,18 +91,6 @@ class pessoaForm(QWidget):
 
         self.setFixedSize(self.size())
 
-
-    def salvar_imagem(self):
-        
-        self.file.salvar_figura()
-
-
-        customDialog("Figura salva com sucesso!")
-
-        plt.close('all')
-
-        self.close()
-
         
 
 

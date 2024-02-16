@@ -4,9 +4,8 @@ from PySide6.QtGui import (QFont, QIcon)
 
 
 from modules.alertDialog import alertDialog
-from modules.pessoaForm import pessoaForm
-from modules.figureWindow import figureWindow
-from modules.signalWindow import signalWindow
+from modules.newAnalysis import newAnalysis
+from modules.analysisWindow import analysisWindow
 
 from database.db import *
 
@@ -19,47 +18,16 @@ class ReadOnlyDelegate(QStyledItemDelegate):
 class pessoaWindow(QWidget):
 
 
-    #Abre janela do windows para selecionar arquivos .wav
-    def abrir_arquivo(self):
-        dialog = QFileDialog(self)
-        dialog.setFileMode(QFileDialog.FileMode.ExistingFiles)
-        dialog.setNameFilter("Audio (*.wav)")
-        dialog.setViewMode(QFileDialog.ViewMode.List)
-        if dialog.exec():
-            filename = dialog.selectedFiles()
-
-            caminho = filename[0]
-            
-
-            self.abrir_janela_arquivo(caminho, self.id)
-
-
-    def abrir_janela_arquivo(self, caminho, id):
-        self.janela_arquivo = figureWindow(caminho, id)
-
-
-        self.janela_arquivo.show()
-
-    def abrir_janela_sinal(self):
-
-        input_settings = select_config_input_device(conn)
-
-        device = json.loads(input_settings[2])
-
-        self.signal = signalWindow(device["id"])
-
-        
-        self.signal.show()
-
     def cadastrar(self):
-        self.janela_cadastrar = pessoaForm()
-        self.janela_cadastrar.show()
+        self.janela_nova_analise = newAnalysis()
+        self.janela_nova_analise.show()
 
 
     def create_callback_abrir(self, info):
         def button_clicked():
             try:
-                print('TELA COM LISTA DE REGISTROS E OPÇÕES DE GRAVAR')
+                self.janela_analise = analysisWindow(info)
+                self.janela_analise.show()
             except Exception as e:
                 alertDialog('Arquivo de áudio não encontrado!')
                 print(e)
@@ -89,7 +57,7 @@ class pessoaWindow(QWidget):
 
         conn = get_conn()
 
-        analises = get_analise_by_id_individuo(conn, id)
+        analises = get_analise_by_pessoa_id(conn, id)
 
         
         linhas = len(analises)
@@ -127,7 +95,7 @@ class pessoaWindow(QWidget):
             btnAbrir.clicked.connect(callback_abrir)
             btnAbrir.setText("Expandir")
             
-            self.tabela.setCellWidget(x, 3, btnAbrir)
+            self.tabela.setCellWidget(x, 2, btnAbrir)
 
 
         
@@ -141,23 +109,15 @@ class pessoaWindow(QWidget):
 
         layout_tabela.addWidget(self.tabela)
 
+
+        button = QPushButton('Nova Análise')
+        button.setFont(font)
+        button.clicked.connect(self.cadastrar)
+
+        layout_tabela.addWidget(button)
+
         layout_horizontal.addLayout(layout_tabela)
 
-        layout_botoes = QVBoxLayout()
-
-        botao_abrir = QPushButton('Abrir arquivo')
-        botao_abrir.setFont(font)
-        botao_abrir.clicked.connect(self.abrir_arquivo)
-
-        botao_gravar = QPushButton('Gravar Sinal')
-        botao_gravar.setFont(font)
-        botao_gravar.clicked.connect(self.abrir_janela_sinal)
-
-        layout_botoes.addWidget(botao_abrir)
-
-        layout_botoes.addWidget(botao_gravar)
-
-        layout_horizontal.addLayout(layout_botoes)
 
               
 

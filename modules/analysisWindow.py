@@ -66,7 +66,7 @@ class analysisWindow(QWidget):
 
             conn = get_conn()
 
-            registro = select_wav_data(conn, id)
+            registro = select_wav_data(conn, self.wav_id)
 
             caminho_imagem = registro[2]
             caminho_audio = registro[3]
@@ -89,12 +89,16 @@ class analysisWindow(QWidget):
             try:
 
                 self.fecharJanela()
-                delete_wav_data(conn=conn, id=id)
-                print("Registro excluído com sucesso!")
-                customDialog("Registro excluído com sucesso!")
+                delete_wav_data(conn=conn, id=self.wav_id)
  
             except Exception as e:
                 print(e)
+            else:
+                
+                delete_analise(conn=conn, id=id)
+
+                print("Análise excluída com sucesso!")
+                customDialog("Análise excluído com sucesso!")
             conn.close()
             print('Confirmado')
 
@@ -113,8 +117,14 @@ class analysisWindow(QWidget):
         self.file = arquivo()
         
         conn = get_conn()
+        
+        #id passado para a janela é o de análise, por isso é preciso buscar o id_wav_data para gerar o gráfico
 
-        registro = select_wav_data(conn, id)
+        wav_id = get_id_wav_data(conn, id)
+
+        self.wav_id = wav_id[0]
+
+        registro = select_wav_data(conn, self.wav_id)
 
         nome = registro[0]
         
