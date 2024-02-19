@@ -54,12 +54,14 @@ class newAnalysis(QWidget):
         
 
             
-    def __init__(self):
+    def __init__(self, id):
         super().__init__()
 
         self.setWindowTitle('Nova Análise')
 
         self.setWindowIcon(QIcon('./sound-wave.ico'))
+
+        self.id = id
 
         layout = QVBoxLayout()
 

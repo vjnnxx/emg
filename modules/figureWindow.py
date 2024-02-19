@@ -1,5 +1,5 @@
 from PySide6.QtCore import (Qt)
-from PySide6.QtWidgets import (QWidget, QVBoxLayout, QLabel, QPushButton)
+from PySide6.QtWidgets import (QWidget, QVBoxLayout, QLabel, QPushButton, QLineEdit)
 from PySide6.QtGui import (QIcon)
 
 from modules.dialogo import customDialog
@@ -11,10 +11,15 @@ import matplotlib.pyplot as plt
 #Janela de gráfico dos arquivos externos
 class figureWindow(QWidget):
 
+    def change_name(self, nome):
+        self.nome = nome
+
             
     def __init__(self, caminho, id):
         super().__init__()
         self.setWindowIcon(QIcon('./sound-wave.ico'))
+
+        self.nome = ''
 
         self.id = id
         
@@ -46,7 +51,10 @@ class figureWindow(QWidget):
         botaoSalvar = QPushButton('Salvar')
         botaoSalvar.clicked.connect(self.salvar_imagem)
 
-    
+        input_nome = QLineEdit()
+        input_nome.textChanged.connect(self.change_name)
+
+        layout.addWidget(input_nome)
 
         layout.addWidget(botaoSalvar)
 
@@ -57,7 +65,7 @@ class figureWindow(QWidget):
 
     def salvar_imagem(self):
         
-        self.file.salvar_figura(self.id)
+        self.file.salvar_figura(self.id, self.nome)
 
 
         customDialog("Figura salva com sucesso!")

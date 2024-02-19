@@ -1,5 +1,5 @@
 from PySide6.QtCore import (Qt)
-from PySide6.QtWidgets import (QWidget, QVBoxLayout, QLabel, QPushButton, QFormLayout, QLineEdit, QCalendarWidget, QDateEdit)
+from PySide6.QtWidgets import (QWidget, QVBoxLayout, QLabel, QPushButton, QFormLayout, QLineEdit, QDateEdit)
 from PySide6.QtGui import (QIcon)
 
 from datetime import datetime
@@ -44,8 +44,9 @@ class pessoaForm(QWidget):
 
         create_pessoa(conn, pessoa)
 
-        print('Ta cadastrado meu pit')
+        customDialog('Pessoa cadastrada com sucesso!')
 
+        self.close()
         
         
 

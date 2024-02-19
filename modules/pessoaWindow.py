@@ -19,7 +19,7 @@ class pessoaWindow(QWidget):
 
 
     def cadastrar(self):
-        self.janela_nova_analise = newAnalysis()
+        self.janela_nova_analise = newAnalysis(self.id)
         self.janela_nova_analise.show()
 
 

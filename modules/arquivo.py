@@ -1,7 +1,8 @@
 import numpy as np
 import json 
+import time
 
-from database.db import (create_wav_data, get_conn)
+from database.db import (create_wav_data, get_conn, select_last_wav_data_id , create_analise)
 
 from datetime import date
 
@@ -78,10 +79,12 @@ class arquivo:
 
 
     #Função para tratar os dados e salvar a figura
-    def salvar_figura(self, id):
+    def salvar_figura(self, id, nome):
 
         if(self.audioBuffer.size == 0):
             return 'Dados faltantes!'
+        
+        id_pessoa = id
         
 
         #(np.ndarray.max(self.audioBuffer/10000))
@@ -136,11 +139,23 @@ class arquivo:
         
         conn = get_conn()
 
+
+        #criar análise depois de criar wav data e linkar id do wav data criado
+
         create_wav_data(conn=conn, wav_data = data)
 
-        #Pegar id do wav data e vincular a uma nova análise //Pensar na parte de análise 
 
-        # ideia de fluxo: nova analise -> escolher entre abrir e gravar -> mostrar análise expandida
+        time.sleep(1)
+
+        #get last wav data id
+
+        last_id = select_last_wav_data_id(conn)
+
+        last_id = last_id[0]
+
+        analise = (nome, id_pessoa, last_id)
+
+        create_analise(conn, analise)
 
         conn.close()
 

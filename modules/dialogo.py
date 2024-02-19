@@ -24,7 +24,5 @@ class customDialog(QMessageBox):
 
         button = self.exec_()
 
-        if button == QMessageBox.Ok:
-            print("OK!")
         
         
