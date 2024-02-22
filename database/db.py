@@ -68,6 +68,18 @@ def create_wav_data(conn, wav_data):
 
     return cursor.lastrowid
 
+def select_last_wav_data_id(conn):
+
+    cursor = conn.cursor()
+
+    sql = 'SELECT id FROM wav_data WHERE id=(SELECT max(id) FROM wav_data);'
+
+    row = cursor.execute(sql).fetchone()
+
+    return row
+
+    
+
 def delete_wav_data(conn, id):
 
     sql = "DELETE FROM wav_data WHERE id = ?"
@@ -153,6 +165,18 @@ def get_analise_by_pessoa_id(conn, id):
     rows = cursor.execute(sql, [id]).fetchall()
 
     return rows
+
+def create_analise(conn, analise):
+
+    cursor = conn.cursor()
+
+    sql = 'INSERT INTO analises (nome, PessoaID, id_wav_data) VALUES (?, ?, ?)'
+
+    cursor.execute(sql, analise)
+
+    conn.commit()
+
+    return cursor.lastrowid
 
 def select_analise(conn, id):
 
@@ -271,6 +295,7 @@ if config_exists == None:
     data = ('input_device', config)
 
     create_config(conn, data)
+
 
 
 

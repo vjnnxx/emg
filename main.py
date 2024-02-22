@@ -86,6 +86,39 @@ class MainWindow(QMainWindow):
         webbrowser.open('https://github.com/vjnnxx/emg')
 
 
+    def atualizar_tabela(self):
+
+        conn = get_conn()
+        
+        pessoas = select_all_pessoas(conn)
+        linhas = len(pessoas)
+        colunas = 3
+        
+
+        self.tabela.setRowCount(linhas)
+        self.tabela.setColumnCount(colunas+1)
+
+        #self.tabela.resize(300, 300)
+
+        ids = []
+
+        for item in pessoas:
+            ids.append(item[0])
+
+        for x in range(linhas):
+            self.tabela.setItemDelegateForRow(x, self.delegate)
+            for j in range(colunas):
+                self.tabela.setItem(x, j, QTableWidgetItem(str(pessoas[x][j])))
+            
+            callback_abrir = self.create_callback_abrir(ids[x])
+
+            btnAbrir = QPushButton(self.tabela)
+
+            btnAbrir.clicked.connect(callback_abrir)
+            btnAbrir.setText("Expandir")
+
+            self.tabela.setCellWidget(x, 3, btnAbrir)
+
 
 
     def __init__(self):
@@ -148,49 +181,17 @@ class MainWindow(QMainWindow):
 
         layout_horizontal = QHBoxLayout()   
 
-        conn = get_conn()
-
-        pessoas = select_all_pessoas(conn)
-
-        
-        linhas = len(pessoas)
-        colunas = 3
+        #Aqui
 
         #cria tabela 
         self.tabela = QTableWidget()
-
-        delegate = ReadOnlyDelegate(self.tabela)
-        
-        
-
-        self.tabela.setRowCount(linhas)
-        self.tabela.setColumnCount(colunas+1)
         self.tabela.setHorizontalHeaderLabels(["ID", "Nome", "Nascimento", "-"])
 
-        self.tabela.resize(300, 300)
+        self.delegate = ReadOnlyDelegate(self.tabela)
         
-        
+        self.atualizar_tabela()
 
-        ids = []
-
-        for item in pessoas:
-            ids.append(item[0])
-
-        for x in range(linhas):
-            self.tabela.setItemDelegateForRow(x, delegate)
-            for j in range(colunas):
-                self.tabela.setItem(x, j, QTableWidgetItem(str(pessoas[x][j])))
-            
-            callback_abrir = self.create_callback_abrir(ids[x])
-
-            btnAbrir = QPushButton(self.tabela)
-
-            btnAbrir.clicked.connect(callback_abrir)
-            btnAbrir.setText("Expandir")
-
-            self.tabela.setCellWidget(x, 3, btnAbrir)
-
-
+        #Aqui
         
         #Criando fonte e aplicando configurações
         font = QFont()
@@ -205,7 +206,11 @@ class MainWindow(QMainWindow):
         button.setFont(font)
         button.clicked.connect(self.cadastrar)
 
+        botao_atualizar = QPushButton('Atualizar tabela')
+        botao_atualizar.clicked.connect(self.atualizar_tabela)
+
         layout_tabela.addWidget(button)
+        layout_tabela.addWidget(botao_atualizar)
 
         layout_horizontal.addLayout(layout_tabela)
 
