@@ -78,13 +78,14 @@ class signalWindow(QWidget):
         sound_file.setsampwidth(audio.get_sample_size(pyaudio.paInt16))
         sound_file.setframerate(44100)
         sound_file.writeframes(b''.join(frames))
-        sound_file.close()
+        sound_file.close()  
 
         self.file.tratar_wav(novo_arquivo)
 
-        self.file.salvar_figura()
+        self.file.salvar_figura(self.id, self.file.nome_arquivo)
 
-        
+        print(self.file.nome_arquivo)
+
         print(self.nome_arquivo_final)
 
         print('Gravação finalizada')
@@ -98,8 +99,6 @@ class signalWindow(QWidget):
 
         self.botaoGravar.setEnabled(True)
         self.botaoParar.setEnabled(False)
-
-        
 
         customDialog('Gravação salva com sucesso!')
 
@@ -132,9 +131,10 @@ class signalWindow(QWidget):
     
     
     
-    def __init__(self, input_device):
+    def __init__(self, input_device, id):
 
         #self.setWindowIcon(QIcon('./sound-wave.ico'))
+        self.id = id
 
         self.file = arquivo()
 

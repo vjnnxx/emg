@@ -152,6 +152,30 @@ def create_pessoa(conn, pessoa):
 
     return cursor.lastrowid
 
+def select_pessoa_by_id(conn, id):
+
+    cursor = conn.cursor()
+
+    sql = 'SELECT * FROM pessoas WHERE PessoaID = ?'
+
+    id = str(id)
+
+    row = cursor.execute(sql,[id]).fetchone()
+
+    return row
+
+def update_pessoa(conn, info):
+
+    cursor = conn.cursor()
+
+    sql = 'UPDATE pessoas SET nome = ?, data_nasc = ?, observacoes = ? WHERE PessoaID = ?'
+
+    cursor.execute(sql, info)
+
+    conn.commit()
+
+    return cursor.lastrowid
+
 '''Operações da tabela analises'''
 
 def get_analise_by_pessoa_id(conn, id):

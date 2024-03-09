@@ -21,21 +21,17 @@ class newAnalysis(QWidget):
     def abrir_arquivo(self):
         dialog = QFileDialog(self)
         dialog.setFileMode(QFileDialog.FileMode.ExistingFiles)
-        dialog.setNameFilter("Audio (*.wav)")
+        dialog.setNameFilter("Audio (*.wav  *.flac *.ogg *.mat *.raw)")
         dialog.setViewMode(QFileDialog.ViewMode.List)
         if dialog.exec():
             filename = dialog.selectedFiles()
 
             caminho = filename[0]
-            
-
             self.abrir_janela_arquivo(caminho, self.id)
 
 
     def abrir_janela_arquivo(self, caminho, id):
         self.janela_arquivo = figureWindow(caminho, id)
-
-
         self.janela_arquivo.show()
 
     def abrir_janela_sinal(self):
@@ -44,15 +40,10 @@ class newAnalysis(QWidget):
 
         device = json.loads(input_settings[2])
 
-        self.signal = signalWindow(device["id"])
+        self.signal = signalWindow(device["id"], self.id)
 
         
         self.signal.show()
-
-
-        
-        
-
             
     def __init__(self, id):
         super().__init__()

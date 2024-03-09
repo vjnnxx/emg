@@ -1,24 +1,22 @@
 import sys
 import webbrowser
 
-import json
 from PySide6.QtCore import (Qt)
 from PySide6 import QtCore
 from PySide6.QtGui import QFont, QAction, QIcon
-from PySide6.QtWidgets import ( QApplication, QLabel, QPushButton, QWidget, QVBoxLayout, QHBoxLayout, QMainWindow, QFileDialog, QStyledItemDelegate, QTableWidgetItem, QTableWidget)
+from PySide6.QtWidgets import ( QApplication, QLabel, QPushButton, QWidget, QVBoxLayout, QHBoxLayout, QMainWindow, QStyledItemDelegate, QTableWidgetItem, QTableWidget)
 
 
-from modules.signalWindow import signalWindow
-from modules.figureWindow import figureWindow
 from modules.deviceWindow import deviceWindow
 from modules.listWindow import listWindow
 from modules.pessoaForm import pessoaForm
 from modules.pessoaWindow import pessoaWindow
 from modules.alertDialog import alertDialog
+from modules.editWindow import editWindow
 
 
 from database.start_db import start
-from database.db import (select_config_input_device, get_conn, select_all_pessoas, table_exists)
+from database.db import (get_conn, select_all_pessoas, table_exists)
 
 import sounddevice as sd
 
@@ -66,6 +64,16 @@ class MainWindow(QMainWindow):
                 alertDialog('Ops, ocorreu um erro!')
                 print(e)
         return button_clicked
+    
+    def create_callback_editar(self, info):
+        def button_clicked():
+            try:
+                self.janela_editar = editWindow(info)
+                self.janela_editar.show()
+            except Exception as e:
+                alertDialog('Ops, ocorreu um erro!')
+                print(e)
+        return button_clicked
 
 
     def abrir_janela_analises(self):
@@ -96,7 +104,8 @@ class MainWindow(QMainWindow):
         
 
         self.tabela.setRowCount(linhas)
-        self.tabela.setColumnCount(colunas+1)
+        self.tabela.setColumnCount(colunas+2)
+        self.tabela.setHorizontalHeaderLabels(["ID", "Nome", "Nascimento", "", ""])
 
         #self.tabela.resize(300, 300)
 
@@ -117,7 +126,17 @@ class MainWindow(QMainWindow):
             btnAbrir.clicked.connect(callback_abrir)
             btnAbrir.setText("Expandir")
 
+            callback_editar = self.create_callback_editar(ids[x])
+
+            btnEditar = QPushButton(self.tabela)
+            btnEditar.clicked.connect(callback_editar)
+            btnEditar.setText("Editar")
+
             self.tabela.setCellWidget(x, 3, btnAbrir)
+
+            self.tabela.setCellWidget(x, 4, btnEditar)
+
+
 
 
 
@@ -161,7 +180,7 @@ class MainWindow(QMainWindow):
         about_menu.addAction(about_action)
         about_action.triggered.connect(self.abrir_sobre)
 
-        help_menu = menu.addMenu('Ajuda')
+        #help_menu = menu.addMenu('Ajuda')
         
         
 
@@ -185,7 +204,7 @@ class MainWindow(QMainWindow):
 
         #cria tabela 
         self.tabela = QTableWidget()
-        self.tabela.setHorizontalHeaderLabels(["ID", "Nome", "Nascimento", "-"])
+        
 
         self.delegate = ReadOnlyDelegate(self.tabela)
         

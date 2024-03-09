@@ -88,10 +88,6 @@ class listWindow(QWidget):
                 print(e)
         return button_clicked
     
-
-    
-    
-
     def __init__(self):
         super().__init__()
 

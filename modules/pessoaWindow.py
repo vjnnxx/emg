@@ -1,6 +1,6 @@
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout ,QLabel, QPushButton, QTableWidget, QTableWidgetItem, QStyledItemDelegate, QFileDialog)
-from PySide6.QtGui import (QFont, QIcon)
+from PySide6.QtGui import (QFont, QIcon, QAction)
 
 
 from modules.alertDialog import alertDialog
@@ -16,6 +16,18 @@ class ReadOnlyDelegate(QStyledItemDelegate):
 
 
 class pessoaWindow(QWidget):
+    '''
+    def atualizar_tabela(self):
+        conn = get_conn()
+
+        pessoa = select_pessoa_by_id(conn, self.id)
+
+        nome_completo = pessoa[1]
+
+        primeiro_nome = nome_completo.split(" ")
+
+        primeiro_nome = primeiro_nome[0]
+    '''
 
 
     def cadastrar(self):
@@ -37,25 +49,36 @@ class pessoaWindow(QWidget):
     def __init__(self, id):
         super().__init__()
 
-        self.id = id
+        self.id = id #PessoaID 
+
+        conn = get_conn()
+
+        pessoa = select_pessoa_by_id(conn, self.id)
+
+        nome_completo = pessoa[1]
+
+        primeiro_nome = nome_completo.split(" ")
+
+        primeiro_nome = primeiro_nome[0]
+        
+
 
         layout_tabela = QVBoxLayout()
 
-        self.setWindowTitle("PESSOA #001")
+        self.setWindowTitle("{}".format(nome_completo))
         self.resize(600, 500)
         self.setWindowIcon(QIcon('./sound-wave.ico'))
 
         title_font = QFont()
         title_font.setPixelSize(45)
 
-        self.label = QLabel("Análises de Pessoa #001")
+        self.label = QLabel("Análises de {}".format(primeiro_nome))
         self.label.setAlignment(Qt.AlignCenter)
         self.label.setFont(title_font)
         layout_tabela.addWidget(self.label)
 
         layout_horizontal = QHBoxLayout()   
 
-        conn = get_conn()
 
         analises = get_analise_by_pessoa_id(conn, id)
 
@@ -115,6 +138,9 @@ class pessoaWindow(QWidget):
         button.clicked.connect(self.cadastrar)
 
         layout_tabela.addWidget(button)
+
+
+        #Criar botão e tela para vizualizar informações
 
         layout_horizontal.addLayout(layout_tabela)
 

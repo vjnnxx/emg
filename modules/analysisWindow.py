@@ -21,8 +21,8 @@ class analysisWindow(QWidget):
     def fecharJanela(self):
         self.close()
     
-    def encontrar_picos(self, buffer, tempo):
-        self.peakWindow = findPeakWindow(buffer, tempo)
+    def encontrar_picos(self, buffer, tempo, registro):
+        self.peakWindow = findPeakWindow(buffer, tempo, registro)
         
         self.peakWindow.show()
 
@@ -141,11 +141,7 @@ class analysisWindow(QWidget):
         #array numpy de 0 até a duração ao passo de 1 divido pelo SR
         tempo = np.arange(0,duracao,1/sampleRate) 
 
-       
-
         self.file.tratar_wav(caminho_audio)
-
-
 
         buffer = select_buffer_wav_data(conn, id)
 
@@ -153,24 +149,15 @@ class analysisWindow(QWidget):
 
         buffer = np.array(buffer)
 
-        tamanho = np.size(buffer)
-
         buffer = buffer/10000
-
 
         '''Cálculo do RMS'''
 
         buffer_quadrado = buffer ** 2
 
-
         buffer = np.sqrt(buffer_quadrado)
 
-
-
-
         self.setWindowTitle("Arquivo expandido")
-
-        
 
         layout = QVBoxLayout()
 
@@ -195,7 +182,7 @@ class analysisWindow(QWidget):
 
 
         botaoPeaks = QPushButton('Achar Picos')
-        botaoPeaks.clicked.connect(lambda: self.encontrar_picos(buffer,tempo))
+        botaoPeaks.clicked.connect(lambda: self.encontrar_picos(self.file.audioBuffer,tempo,registro))
         
         botaoExportar = QPushButton('Exportar imagem')
         botaoExportar.clicked.connect(lambda: self.exportar_imagem(caminho_imagem))
