@@ -1,22 +1,22 @@
 import sys
 import webbrowser
 
-import json
 from PySide6.QtCore import (Qt)
 from PySide6 import QtCore
 from PySide6.QtGui import QFont, QAction, QIcon
-from PySide6.QtWidgets import ( QApplication, QLabel, QPushButton, QWidget, QVBoxLayout, QMainWindow, QFileDialog)
+from PySide6.QtWidgets import ( QApplication, QLabel, QPushButton, QWidget, QVBoxLayout, QHBoxLayout, QMainWindow, QStyledItemDelegate, QTableWidgetItem, QTableWidget)
 
 
-from modules.signalWindow import signalWindow
-from modules.figureWindow import figureWindow
 from modules.deviceWindow import deviceWindow
 from modules.listWindow import listWindow
-from modules.testWindow import testWindow
+from modules.pessoaForm import pessoaForm
+from modules.pessoaWindow import pessoaWindow
+from modules.alertDialog import alertDialog
+from modules.editWindow import editWindow
 
 
 from database.start_db import start
-from database.db import (select_config_input_device, get_conn,create_tables, table_exists)
+from database.db import (get_conn, select_all_pessoas, table_exists)
 
 import sounddevice as sd
 
@@ -32,49 +32,45 @@ if table_check == 0:
     start() 
 
 
+
+class ReadOnlyDelegate(QStyledItemDelegate):
+    def createEditor(self, parent, option, index):
+        return
+
+
 #Janela principal do app
 class MainWindow(QMainWindow):
-
-
     #Fecha todas as janelas após fechar a main
     def closeEvent(self, event):
         for window in QApplication.topLevelWidgets():
             window.close()
 
 
-    #Abre janela do windows para selecionar arquivos .wav
-    def abrir_arquivo(self):
-        dialog = QFileDialog(self)
-        dialog.setFileMode(QFileDialog.FileMode.ExistingFiles)
-        dialog.setNameFilter("Audio (*.wav)")
-        dialog.setViewMode(QFileDialog.ViewMode.List)
-        if dialog.exec():
-            filename = dialog.selectedFiles()
-
-            caminho = filename[0]
-            
-
-            self.abrir_janela_arquivo(caminho)
+    def cadastrar(self):
+            self.janela_cadastrar = pessoaForm()
+            self.janela_cadastrar.show()
 
 
+    def create_callback_abrir(self, info):
+        def button_clicked():
+            try:
+                self.janela_expandida = pessoaWindow(info)
+                self.janela_expandida.show()
+            except Exception as e:
+                alertDialog('Ops, ocorreu um erro!')
+                print(e)
+        return button_clicked
+    
+    def create_callback_editar(self, info):
+        def button_clicked():
+            try:
+                self.janela_editar = editWindow(info)
+                self.janela_editar.show()
+            except Exception as e:
+                alertDialog('Ops, ocorreu um erro!')
+                print(e)
+        return button_clicked
 
-
-    def abrir_janela_arquivo(self, caminho):
-        self.janela_arquivo = figureWindow(caminho)
-
-
-        self.janela_arquivo.show()
-
-    def abrir_janela_sinal(self):
-
-        input_settings = select_config_input_device(conn)
-
-        device = json.loads(input_settings[2])
-
-        self.signal = signalWindow(device["id"])
-
-        
-        self.signal.show()
 
     def abrir_janela_analises(self):
         self.janela_analises = listWindow()
@@ -83,8 +79,6 @@ class MainWindow(QMainWindow):
         
 
     def selecionar_dispositivo(self, devices):
-       
-
         self.device_window = deviceWindow(devices)
         self.device_window.setGeometry(200, 200, 400, 300)
 
@@ -93,23 +87,60 @@ class MainWindow(QMainWindow):
     def abrir_sobre(self):
         webbrowser.open('https://github.com/vjnnxx/emg')
 
-    def abrir_janela_teste(self):
 
-        self.janela = testWindow()
-        self.janela.show()
-       
+    def atualizar_tabela(self):
+
+        conn = get_conn()
+        
+        pessoas = select_all_pessoas(conn)
+        linhas = len(pessoas)
+        colunas = 3
+        
+
+        self.tabela.setRowCount(linhas)
+        self.tabela.setColumnCount(colunas+2)
+        self.tabela.setHorizontalHeaderLabels(["ID", "Nome", "Nascimento", "", ""])
+
+        #self.tabela.resize(300, 300)
+
+        ids = []
+
+        for item in pessoas:
+            ids.append(item[0])
+
+        for x in range(linhas):
+            self.tabela.setItemDelegateForRow(x, self.delegate)
+            for j in range(colunas):
+                self.tabela.setItem(x, j, QTableWidgetItem(str(pessoas[x][j])))
+            
+            callback_abrir = self.create_callback_abrir(ids[x])
+
+            btnAbrir = QPushButton(self.tabela)
+
+            btnAbrir.clicked.connect(callback_abrir)
+            btnAbrir.setText("Expandir")
+
+            callback_editar = self.create_callback_editar(ids[x])
+
+            btnEditar = QPushButton(self.tabela)
+            btnEditar.clicked.connect(callback_editar)
+            btnEditar.setText("Editar")
+
+            self.tabela.setCellWidget(x, 3, btnAbrir)
+
+            self.tabela.setCellWidget(x, 4, btnEditar)
+
+
 
 
 
     def __init__(self):
         super().__init__()
+
         self.setAttribute(QtCore.Qt.WA_DeleteOnClose)
         self.setWindowTitle('EMG')
 
         self.setWindowIcon(QIcon('./sound-wave.ico'))
-
-        base = QWidget()
-        layout = QVBoxLayout()
 
         #Criando barra de menu
         
@@ -123,10 +154,6 @@ class MainWindow(QMainWindow):
 
         audio_menu = menu.addMenu('Dispositivo de áudio')
         
-        
-
-       
-
         input_devices = []
 
 
@@ -141,66 +168,63 @@ class MainWindow(QMainWindow):
         device_select_action.triggered.connect(lambda:self.selecionar_dispositivo(input_devices))
 
 
-        about_menu = menu.addMenu('Sobre') #implementar as bobeiras
-
+        about_menu = menu.addMenu('Sobre') 
 
         about_action = QAction('Sobre o projeto', self)
         about_menu.addAction(about_action)
         about_action.triggered.connect(self.abrir_sobre)
+
+        layout_tabela = QVBoxLayout()
+
+        self.setWindowTitle("EMG")
+        self.resize(600, 500)
+        self.setWindowIcon(QIcon('./sound-wave.ico'))
+
+        title_font = QFont()
+        title_font.setPixelSize(45)
+
+        self.label = QLabel("Pessoas cadastradas")
+        self.label.setAlignment(Qt.AlignCenter)
+        self.label.setFont(title_font)
+        layout_tabela.addWidget(self.label)
+
+        layout_horizontal = QHBoxLayout()   
+
+        #Aqui
+
+        #cria tabela 
+        self.tabela = QTableWidget()
         
-
-       
-
+        self.delegate = ReadOnlyDelegate(self.tabela)
         
+        self.atualizar_tabela()
 
+        #Aqui
+        
         #Criando fonte e aplicando configurações
         font = QFont()
-        font.setPixelSize(60)
+        font.setPixelSize(30)
 
+        self.tabela.resizeColumnsToContents()
         
 
+        layout_tabela.addWidget(self.tabela)
 
-        #Criando label
-        self.label = QLabel('Bem Vindo!')
-        self.label.setFont(font)
-        self.label.setAlignment(Qt.AlignCenter)
-        layout.addWidget(self.label)
-        
+        button = QPushButton('Cadastrar Nova Pessoa')
+        button.setFont(font)
+        button.clicked.connect(self.cadastrar)
 
-        #Cria botão para listar análises salvas
+        botao_atualizar = QPushButton('Atualizar tabela')
+        botao_atualizar.clicked.connect(self.atualizar_tabela)
 
-        botaoAnalises = QPushButton('Análises')
-        botaoAnalises.setFont(font)
-        botaoAnalises.clicked.connect(self.abrir_janela_analises)
-        layout.addWidget(botaoAnalises)
+        layout_tabela.addWidget(button)
+        layout_tabela.addWidget(botao_atualizar)
 
-        #Cria botão para abrir arquivo e adiciona botão ao layout
-        botaoAbrir = QPushButton('Abrir arquivo')
-        botaoAbrir.setFont(font)
-        botaoAbrir.clicked.connect(self.abrir_arquivo)
-        layout.addWidget(botaoAbrir)
+        layout_horizontal.addLayout(layout_tabela)
 
+        base = QWidget()
+        base.setLayout(layout_horizontal)
 
-        #Cria botão para gravar sinal e adiciona ao layout
-        botaoGravar = QPushButton('Gravar Sinal')
-        botaoGravar.setFont(font)
-        botaoGravar.clicked.connect(self.abrir_janela_sinal)
-        layout.addWidget(botaoGravar)
-
-        #Testando layout novo
-
-        botaoTeste = QPushButton('Teste')
-        botaoTeste.setFont(font)
-        botaoTeste.clicked.connect(self.abrir_janela_teste)
-
-        
-
-        layout.addWidget(botaoTeste)
-
-
-       
-
-        base.setLayout(layout)
         self.setCentralWidget(base)
 
         self.setFixedSize(self.size())

@@ -68,6 +68,18 @@ def create_wav_data(conn, wav_data):
 
     return cursor.lastrowid
 
+def select_last_wav_data_id(conn):
+
+    cursor = conn.cursor()
+
+    sql = 'SELECT id FROM wav_data WHERE id=(SELECT max(id) FROM wav_data);'
+
+    row = cursor.execute(sql).fetchone()
+
+    return row
+
+    
+
 def delete_wav_data(conn, id):
 
     sql = "DELETE FROM wav_data WHERE id = ?"
@@ -140,9 +152,33 @@ def create_pessoa(conn, pessoa):
 
     return cursor.lastrowid
 
+def select_pessoa_by_id(conn, id):
+
+    cursor = conn.cursor()
+
+    sql = 'SELECT * FROM pessoas WHERE PessoaID = ?'
+
+    id = str(id)
+
+    row = cursor.execute(sql,[id]).fetchone()
+
+    return row
+
+def update_pessoa(conn, info):
+
+    cursor = conn.cursor()
+
+    sql = 'UPDATE pessoas SET nome = ?, data_nasc = ?, observacoes = ? WHERE PessoaID = ?'
+
+    cursor.execute(sql, info)
+
+    conn.commit()
+
+    return cursor.lastrowid
+
 '''Operações da tabela analises'''
 
-def get_analise_by_id_individuo(conn, id):
+def get_analise_by_pessoa_id(conn, id):
 
     cursor = conn.cursor()
 
@@ -154,7 +190,56 @@ def get_analise_by_id_individuo(conn, id):
 
     return rows
 
+def create_analise(conn, analise):
 
+    cursor = conn.cursor()
+
+    sql = 'INSERT INTO analises (nome, PessoaID, id_wav_data) VALUES (?, ?, ?)'
+
+    cursor.execute(sql, analise)
+
+    conn.commit()
+
+    return cursor.lastrowid
+
+def select_analise(conn, id):
+
+    cursor = conn.cursor()
+
+    sql = 'SELECT * FROM analises WHERE AnaliseID = ?'
+
+    id = str(id)
+
+    row = cursor.execute(sql,[id]).fetchone()
+
+    return row
+
+def get_id_wav_data(conn, id): # busca pelo id da análise
+
+    cursor = conn.cursor()
+
+    sql = 'SELECT id_wav_data FROM analises WHERE AnaliseID = ?'
+
+    id = str(id)
+
+    row = cursor.execute(sql,[id]).fetchone()
+
+    return row
+
+def delete_analise(conn, id):
+
+    sql = "DELETE FROM analises WHERE AnaliseID = ?"
+
+    cursor = conn.cursor()
+
+    id = str(id)
+
+    cursor.execute(sql, [id])
+
+    conn.commit()
+
+    return cursor.lastrowid
+    
 
 '''Função para criar tabelas'''
 
@@ -234,6 +319,7 @@ if config_exists == None:
     data = ('input_device', config)
 
     create_config(conn, data)
+
 
 
 

@@ -1,5 +1,7 @@
 import shutil
 import os
+import numpy as np
+import json
 
 from PySide6.QtCore import (Qt)
 from PySide6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QFormLayout,QLabel, QPushButton, QLineEdit, QFileDialog)
@@ -73,16 +75,20 @@ class findPeakWindow(QWidget):
                 print(e)
 
             
-    def __init__(self, buffer_quadrado, tempo):
+    def __init__(self, buffer, tempo, registro):
         super().__init__()
         self.setWindowIcon(QIcon('./sound-wave.ico'))
 
+        self.buffer = buffer
 
-        self.buffer = buffer_quadrado
+        self.buffer = self.buffer/10000
+
+        buffer_quadrado = self.buffer ** 2
+
+        self.buffer = np.sqrt(buffer_quadrado)
 
         self.tempo = tempo
-        
-
+    
         self.threshold = 1
        
 
@@ -102,23 +108,15 @@ class findPeakWindow(QWidget):
 
         self.canva = Canvas()
 
-        
-        
         picos, _ = find_peaks(self.buffer, self.threshold, distance=4410) # picos a cada 100 ms
 
         self.canva.ax.plot(self.buffer)
         
         self.canva.ax.plot(picos, self.buffer[picos], "x")
 
-
-
-
         layout_canva.addWidget(self.canva)
 
         layout_horizontal.addLayout(layout_canva)
-
-
-        layout_inputs = QVBoxLayout()
 
         self.number_input = QLineEdit() 
        
