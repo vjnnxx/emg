@@ -76,7 +76,10 @@ class arquivo:
 
             self.set_nome_arquivo(nome)
 
+            not_wav = False
+
             if(get_file_extension(self.path) != 'wav'):
+                not_wav = True
                 data, samplerate = sf.read(self.path)
                 file_name = nome.split('.')
                 file_name = file_name[0] + '.wav'
@@ -87,6 +90,9 @@ class arquivo:
                 
             #Transforma arquivo selecionado em um buffer de audio 
             self.sampleRate, self.audioBuffer = scipy.io.wavfile.read(self.path)
+
+            if(not_wav):
+                self.audioBuffer = self.audioBuffer[:, 0]
 
             duracao = len(self.audioBuffer)/self.sampleRate
 
@@ -100,10 +106,6 @@ class arquivo:
 
     #Função para tratar os dados e salvar a figura
     def salvar_figura(self, id, nome):
-        
-        print('entrou legal')
-        print(self.path)
-
         if(self.audioBuffer.size == 0):
             return 'Dados faltantes!'
         
@@ -121,7 +123,7 @@ class arquivo:
 
         a = fig.add_subplot(111)
 
-        a.plot(self.tempo, self.audioBuffer/10000)
+        a.plot(self.tempo, self.audioBuffer/10000) #adicionar y no grafico de picos
 
 
         plt.xlabel('Tempo [s]')
@@ -140,13 +142,10 @@ class arquivo:
         
         plt.close()
 
-        
-
         today = date.today()
 
         # dd/mm/YY
         data_atual = today.strftime("%d/%m/%Y")
-       
         buffer_tratado = json.dumps(self.audioBuffer, cls=NumpyEncoder)
 
         caminho_audio = ''

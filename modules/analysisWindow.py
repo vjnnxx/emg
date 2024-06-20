@@ -22,11 +22,14 @@ class analysisWindow(QWidget):
         self.close()
     
     def encontrar_picos(self, buffer, tempo, registro):
+        if(buffer.ndim > 1):
+            buffer = buffer[:, 0]
         self.peakWindow = findPeakWindow(buffer, tempo, registro)
-        
         self.peakWindow.show()
 
     def root_mean(self, buffer, tempo):
+        if(buffer.ndim > 1):
+            buffer = buffer[:, 0]
 
         self.root_mean_window = rootMeanWindow(buffer, tempo)
 
@@ -53,9 +56,6 @@ class analysisWindow(QWidget):
             except Exception as e:
                 print(e)
             
-
-
-
     def excluir_registro(self, id):
 
         
@@ -119,7 +119,6 @@ class analysisWindow(QWidget):
         conn = get_conn()
         
         #id passado para a janela é o de análise, por isso é preciso buscar o id_wav_data para gerar o gráfico
-
         wav_id = get_id_wav_data(conn, id)
 
         self.wav_id = wav_id[0]
@@ -134,9 +133,9 @@ class analysisWindow(QWidget):
 
         caminho_audio = registro[3]
 
-
         sampleRate = registro[4]
 
+        print(caminho_audio)
 
         #array numpy de 0 até a duração ao passo de 1 divido pelo SR
         tempo = np.arange(0,duracao,1/sampleRate) 
@@ -171,6 +170,7 @@ class analysisWindow(QWidget):
         canva = Canvas()
         canva.ax.set_title(self.file.nome_arquivo)
         canva.ax.set_xlabel('Tempo [s]')
+        canva.ax.set_ylim(-4,4)
         canva.ax.set_ylabel('Amplitude [Hz]')
 
         canva.ax.plot(self.file.tempo, self.file.audioBuffer/10000)
@@ -178,7 +178,7 @@ class analysisWindow(QWidget):
         layout.addWidget(canva)
 
         botaoRMS = QPushButton('Calcular RMS')
-        botaoRMS.clicked.connect(lambda: self.root_mean(buffer,tempo))
+        botaoRMS.clicked.connect(lambda: self.root_mean(self.file.audioBuffer/10000,tempo))
 
 
         botaoPeaks = QPushButton('Achar Picos')
@@ -195,12 +195,6 @@ class analysisWindow(QWidget):
         layout.addWidget(botaoPeaks)
         layout.addWidget(botaoExportar)
         layout.addWidget(botaoDelete)
-        
-
-        
-      
-
-
 
         self.setLayout(layout)
 

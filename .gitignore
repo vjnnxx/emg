@@ -1,8 +1,8 @@
 /figures
 /audio
 /_pycache_
-./modules/_pycache_
-./database/_pycache_
+/modules/_pycache_
+/database/_pycache_
 emg.db
 /build
 /dist

@@ -75,11 +75,11 @@ class findPeakWindow(QWidget):
                 print(e)
 
             
-    def __init__(self, buffer_quadrado, tempo, registro):
+    def __init__(self, buffer, tempo, registro):
         super().__init__()
         self.setWindowIcon(QIcon('./sound-wave.ico'))
 
-        self.buffer = buffer_quadrado
+        self.buffer = buffer
 
         self.buffer = self.buffer/10000
 

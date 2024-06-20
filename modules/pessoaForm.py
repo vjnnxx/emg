@@ -10,10 +10,6 @@ from database.db import create_pessoa, get_conn
 
 
 
-
-
-
-
 #Janela de gráfico dos arquivos externos
 class pessoaForm(QWidget):
 

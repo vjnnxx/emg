@@ -40,10 +40,6 @@ class ReadOnlyDelegate(QStyledItemDelegate):
 
 #Janela principal do app
 class MainWindow(QMainWindow):
-
-    
-
-
     #Fecha todas as janelas após fechar a main
     def closeEvent(self, event):
         for window in QApplication.topLevelWidgets():
@@ -83,8 +79,6 @@ class MainWindow(QMainWindow):
         
 
     def selecionar_dispositivo(self, devices):
-       
-
         self.device_window = deviceWindow(devices)
         self.device_window.setGeometry(200, 200, 400, 300)
 
@@ -180,10 +174,6 @@ class MainWindow(QMainWindow):
         about_menu.addAction(about_action)
         about_action.triggered.connect(self.abrir_sobre)
 
-        #help_menu = menu.addMenu('Ajuda')
-        
-        
-
         layout_tabela = QVBoxLayout()
 
         self.setWindowTitle("EMG")
@@ -205,7 +195,6 @@ class MainWindow(QMainWindow):
         #cria tabela 
         self.tabela = QTableWidget()
         
-
         self.delegate = ReadOnlyDelegate(self.tabela)
         
         self.atualizar_tabela()

@@ -1,6 +1,6 @@
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout ,QLabel, QPushButton, QTableWidget, QTableWidgetItem, QStyledItemDelegate, QFileDialog)
-from PySide6.QtGui import (QFont, QIcon, QAction)
+from PySide6.QtGui import (QFont, QIcon)
 
 
 from modules.alertDialog import alertDialog
@@ -16,18 +16,38 @@ class ReadOnlyDelegate(QStyledItemDelegate):
 
 
 class pessoaWindow(QWidget):
-    '''
+    
     def atualizar_tabela(self):
+
         conn = get_conn()
 
-        pessoa = select_pessoa_by_id(conn, self.id)
+        analises = get_analise_by_pessoa_id(conn, self.id)
+        linhas = len(analises)
+        colunas = 2
 
-        nome_completo = pessoa[1]
+        self.tabela.setRowCount(linhas)
+        self.tabela.setColumnCount(colunas+1)
+        self.tabela.setHorizontalHeaderLabels(["ID", "Nome", "Visualizar"])
+        self.tabela.resize(300, 300)
+        ids = []
 
-        primeiro_nome = nome_completo.split(" ")
+        for item in analises:
+            ids.append(item[0])
 
-        primeiro_nome = primeiro_nome[0]
-    '''
+        for x in range(linhas):
+            self.tabela.setItemDelegateForRow(x, self.delegate)
+            for j in range(colunas):
+                self.tabela.setItem(x, j, QTableWidgetItem(str(analises[x][j])))
+            
+            callback_abrir = self.create_callback_abrir(ids[x])
+
+            btnAbrir = QPushButton(self.tabela)
+
+            btnAbrir.clicked.connect(callback_abrir)
+            btnAbrir.setText("Expandir")
+            
+            self.tabela.setCellWidget(x, 2, btnAbrir)
+    
 
 
     def cadastrar(self):
@@ -48,21 +68,14 @@ class pessoaWindow(QWidget):
 
     def __init__(self, id):
         super().__init__()
-
         self.id = id #PessoaID 
 
         conn = get_conn()
-
         pessoa = select_pessoa_by_id(conn, self.id)
-
         nome_completo = pessoa[1]
-
         primeiro_nome = nome_completo.split(" ")
-
         primeiro_nome = primeiro_nome[0]
         
-
-
         layout_tabela = QVBoxLayout()
 
         self.setWindowTitle("{}".format(nome_completo))
@@ -79,48 +92,10 @@ class pessoaWindow(QWidget):
 
         layout_horizontal = QHBoxLayout()   
 
-
-        analises = get_analise_by_pessoa_id(conn, id)
-
-        
-        linhas = len(analises)
-        colunas = 2
-
         #cria tabela 
         self.tabela = QTableWidget()
-
-        delegate = ReadOnlyDelegate(self.tabela)
-        
-        
-
-        self.tabela.setRowCount(linhas)
-        self.tabela.setColumnCount(colunas+1)
-        self.tabela.setHorizontalHeaderLabels(["ID", "Nome", "Visualizar"])
-
-        self.tabela.resize(300, 300)
-        
-        
-
-        ids = []
-
-        for item in analises:
-            ids.append(item[0])
-
-        for x in range(linhas):
-            self.tabela.setItemDelegateForRow(x, delegate)
-            for j in range(colunas):
-                self.tabela.setItem(x, j, QTableWidgetItem(str(analises[x][j])))
-            
-            callback_abrir = self.create_callback_abrir(ids[x])
-
-            btnAbrir = QPushButton(self.tabela)
-
-            btnAbrir.clicked.connect(callback_abrir)
-            btnAbrir.setText("Expandir")
-            
-            self.tabela.setCellWidget(x, 2, btnAbrir)
-
-
+        self.delegate = ReadOnlyDelegate(self.tabela)
+        self.atualizar_tabela()
         
         #Criando fonte e aplicando configurações
         font = QFont()
@@ -137,7 +112,11 @@ class pessoaWindow(QWidget):
         button.setFont(font)
         button.clicked.connect(self.cadastrar)
 
+        botao_atualizar = QPushButton('Atualizar Tabela')
+        botao_atualizar.clicked.connect(self.atualizar_tabela)
+
         layout_tabela.addWidget(button)
+        layout_tabela.addWidget(botao_atualizar)
 
 
         #Criar botão e tela para vizualizar informações
