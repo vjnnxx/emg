@@ -176,6 +176,22 @@ def update_pessoa(conn, info):
 
     return cursor.lastrowid
 
+
+def delete_pessoa(conn, id):
+    cursor = conn.cursor()
+
+    # sql = 'SELECT * FROM analises WHERE '
+
+    sql = 'DELETE FROM pessoas WHERE PessoaID = ?'
+
+    id = str(id)
+
+    cursor.execute(sql,[id]).fetchone()
+
+    conn.commit()
+
+    return cursor.lastrowid
+
 '''Operações da tabela analises'''
 
 def get_analise_by_pessoa_id(conn, id):

@@ -48,7 +48,6 @@ class analysisWindow(QWidget):
             path_destino = selected_dir[0]
             
             try:
-
                 dest = shutil.copy(path_origem, path_destino)
 
                 customDialog("Arquivo exportado para: " + dest)
@@ -111,7 +110,7 @@ class analysisWindow(QWidget):
 
         self.setWindowTitle("Registros Salvos")
 
-        self.setWindowIcon(QIcon('./sound-wave.ico'))
+        self.setWindowIcon(QIcon('./rural_logo.ico'))
 
         
         self.file = arquivo()

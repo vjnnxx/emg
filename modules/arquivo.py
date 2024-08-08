@@ -1,9 +1,6 @@
 import numpy as np
 import json 
 import time
-from pydub import AudioSegment
-from pydub.playback import play
-
 import soundfile as sf
 
 from database.db import (create_wav_data, get_conn, select_last_wav_data_id , create_analise)

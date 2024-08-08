@@ -41,7 +41,19 @@ class findPeakWindow(QWidget):
         self.canva.ax.plot(self.buffer)
         
         self.canva.ax.plot(picos, self.buffer[picos], "x")
+        '''
 
+        picos = find_peaks(self.buffer, self.threshold, distance=4410) # picos a cada 100 ms
+
+        posicao_picos = self.buffer[picos[0]]
+        altura = picos[1]['peak_heights']
+
+        self.canva.ax.plot(self.tempo, self.buffer)
+
+        print(posicao_picos)
+
+        self.canva.ax.scatter(x=self.buffer, y= posicao_picos, color='r', marker='D')
+        '''
         self.canva.draw()
 
         self.limit_label.setText(str(self.threshold))
@@ -77,7 +89,7 @@ class findPeakWindow(QWidget):
             
     def __init__(self, buffer, tempo, registro):
         super().__init__()
-        self.setWindowIcon(QIcon('./sound-wave.ico'))
+        self.setWindowIcon(QIcon('./rural_logo.ico'))
 
         self.buffer = buffer
 
@@ -110,7 +122,12 @@ class findPeakWindow(QWidget):
 
         picos, _ = find_peaks(self.buffer, self.threshold, distance=4410) # picos a cada 100 ms
 
-        self.canva.ax.plot(self.buffer)
+        #posicao_picos = self.buffer[picos[0]]
+        #altura = picos[1]['peak_heights']
+
+        self.canva.ax.plot(self.tempo, self.buffer)
+
+        #self.canva.ax.scatter(posicao_picos, altura, color='r', marker='D')
         
         self.canva.ax.plot(picos, self.buffer[picos], "x")
 

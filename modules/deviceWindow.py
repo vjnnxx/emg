@@ -50,7 +50,7 @@ class deviceWindow(QWidget):
 
         self.setWindowTitle("Selecionar dispositivo")
 
-        self.setWindowIcon(QIcon('./sound-wave.ico'))
+        self.setWindowIcon(QIcon('./rural_logo.ico'))
 
         self.devices = devices
         

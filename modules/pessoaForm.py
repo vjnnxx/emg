@@ -49,7 +49,7 @@ class pessoaForm(QWidget):
             
     def __init__(self):
         super().__init__()
-        self.setWindowIcon(QIcon('./sound-wave.ico'))
+        self.setWindowIcon(QIcon('./rural_logo.ico'))
         
 
         self.setWindowTitle("Formulário")

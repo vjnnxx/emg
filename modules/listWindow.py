@@ -95,7 +95,7 @@ class listWindow(QWidget):
 
         self.setWindowTitle("Arquivos Salvos")
         self.resize(1000, 500)
-        self.setWindowIcon(QIcon('./sound-wave.ico'))
+        self.setWindowIcon(QIcon('./rural_logo.ico'))
 
         self.label = QLabel("Lista de análises")
         self.label.setAlignment(Qt.AlignCenter)
@@ -119,6 +119,7 @@ class listWindow(QWidget):
         self.tabela.setRowCount(linhas)
         self.tabela.setColumnCount(colunas+2)
         self.tabela.setHorizontalHeaderLabels(["ID", "Nome", "Data","Duracao", "Caminho imagem", "Caminho Audio", "-", "x"])
+        
         
         
 

@@ -96,7 +96,7 @@ class rootMeanWindow(QWidget):
     def __init__(self, buffer, tempo):
         super().__init__()
 
-        self.setWindowIcon(QIcon('./sound-wave.ico'))
+        self.setWindowIcon(QIcon('./rural_logo.ico'))
 
         buffer_quadrado = buffer ** 2
 

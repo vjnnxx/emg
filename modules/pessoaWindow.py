@@ -28,7 +28,9 @@ class pessoaWindow(QWidget):
         self.tabela.setRowCount(linhas)
         self.tabela.setColumnCount(colunas+1)
         self.tabela.setHorizontalHeaderLabels(["ID", "Nome", "Visualizar"])
-        self.tabela.resize(300, 300)
+        self.tabela.horizontalHeader().setMinimumSectionSize(15)
+        self.tabela.columnWidth(50)
+        self.tabela.resize(550, 300)
         ids = []
 
         for item in analises:
@@ -80,7 +82,7 @@ class pessoaWindow(QWidget):
 
         self.setWindowTitle("{}".format(nome_completo))
         self.resize(600, 500)
-        self.setWindowIcon(QIcon('./sound-wave.ico'))
+        self.setWindowIcon(QIcon('./rural_logo.ico'))
 
         title_font = QFont()
         title_font.setPixelSize(45)

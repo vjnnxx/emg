@@ -133,7 +133,7 @@ class signalWindow(QWidget):
     
     def __init__(self, input_device, id):
 
-        #self.setWindowIcon(QIcon('./sound-wave.ico'))
+        #self.setWindowIcon(QIcon('./rural_logo.ico'))
         self.id = id
 
         self.file = arquivo()

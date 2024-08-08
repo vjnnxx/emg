@@ -5,8 +5,9 @@ from PySide6.QtGui import (QIcon)
 from datetime import datetime
 
 from modules.dialogo import customDialog
+from modules.confirmDialog import confirmDialog
 
-from database.db import update_pessoa, get_conn, select_pessoa_by_id
+from database.db import update_pessoa, get_conn, select_pessoa_by_id, delete_pessoa
 
 
 #Janela de gráfico dos arquivos externos
@@ -42,13 +43,34 @@ class editWindow(QWidget):
         customDialog('Informações atualizadas com sucesso!')
 
         self.close()
+
+    
+    def excluir_cadastro(self, id):
+
+        dialog = confirmDialog()
+
+        if dialog.exec_():
+            conn = get_conn()
+
+            try:
+                delete_pessoa(conn, id)
+            except Exception as e:
+                print(e)
+            else:
+                print("Cadastro excluído com sucesso!")
+                customDialog("Cadastro excluído com sucesso!")
+                self.close()
+            finally:
+                conn.close()
+        else:
+            print('melhor não.')
         
         
 
             
     def __init__(self, id):
         super().__init__()
-        self.setWindowIcon(QIcon('./sound-wave.ico'))
+        self.setWindowIcon(QIcon('./rural_logo.ico'))
         
         self.id = id
 
@@ -97,10 +119,14 @@ class editWindow(QWidget):
         botao_enviar = QPushButton('Enviar')
         botao_enviar.clicked.connect(self.atualizar_pessoa)
 
+        botao_excluir = QPushButton('Excluir')
+        botao_excluir.clicked.connect(lambda: self.excluir_cadastro(self.id))
+
         layout.addRow("Nome", input_nome)
         layout.addRow("Data de nascimento", input_data)
         layout.addRow("Observações", input_observacoes)
         layout.addRow("", botao_enviar)
+        layout.addRow("", botao_excluir)
         
     
 

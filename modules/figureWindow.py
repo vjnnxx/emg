@@ -17,7 +17,7 @@ class figureWindow(QWidget):
             
     def __init__(self, caminho, id):
         super().__init__()
-        self.setWindowIcon(QIcon('./sound-wave.ico'))
+        self.setWindowIcon(QIcon('./rural_logo.ico'))
 
         self.nome = ''
 

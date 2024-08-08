@@ -21,7 +21,7 @@ class newAnalysis(QWidget):
     def abrir_arquivo(self):
         dialog = QFileDialog(self)
         dialog.setFileMode(QFileDialog.FileMode.ExistingFiles)
-        dialog.setNameFilter("Audio (*.wav  *.flac *.ogg *.mat *.raw)")
+        dialog.setNameFilter("Audio (*.wav  *.flac *.ogg *.raw)")
         dialog.setViewMode(QFileDialog.ViewMode.List)
         if dialog.exec():
             filename = dialog.selectedFiles()
@@ -50,7 +50,7 @@ class newAnalysis(QWidget):
 
         self.setWindowTitle('Nova Análise')
 
-        self.setWindowIcon(QIcon('./sound-wave.ico'))
+        self.setWindowIcon(QIcon('./rural_logo.ico'))
 
         self.id = id
 

@@ -100,8 +100,10 @@ class MainWindow(QMainWindow):
         self.tabela.setRowCount(linhas)
         self.tabela.setColumnCount(colunas+2)
         self.tabela.setHorizontalHeaderLabels(["ID", "Nome", "Nascimento", "", ""])
+        self.tabela.horizontalHeader().setMinimumSectionSize(15)
+        self.tabela.columnWidth(50)
 
-        #self.tabela.resize(300, 300)
+        self.tabela.resize(550, 300)
 
         ids = []
 
@@ -140,7 +142,7 @@ class MainWindow(QMainWindow):
         self.setAttribute(QtCore.Qt.WA_DeleteOnClose)
         self.setWindowTitle('EMG')
 
-        self.setWindowIcon(QIcon('./sound-wave.ico'))
+        self.setWindowIcon(QIcon('./rural_logo.ico'))
 
         #Criando barra de menu
         
@@ -178,7 +180,7 @@ class MainWindow(QMainWindow):
 
         self.setWindowTitle("EMG")
         self.resize(600, 500)
-        self.setWindowIcon(QIcon('./sound-wave.ico'))
+        self.setWindowIcon(QIcon('./rural_logo.ico'))
 
         title_font = QFont()
         title_font.setPixelSize(45)
